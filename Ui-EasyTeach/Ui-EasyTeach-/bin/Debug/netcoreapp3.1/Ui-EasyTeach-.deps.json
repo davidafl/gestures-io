@@ -1,0 +1,67 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "Ui-EasyTeach-/1.0.0": {
+        "dependencies": {
+          "AForge": "2.2.5.0",
+          "AForge.Video.DirectShow": "2.2.5.0",
+          "AForge.Video": "2.2.5.0"
+        },
+        "runtime": {
+          "Ui-EasyTeach-.dll": {}
+        }
+      },
+      "AForge/2.2.5.0": {
+        "runtime": {
+          "AForge.dll": {
+            "assemblyVersion": "2.2.5.0",
+            "fileVersion": "2.2.5.0"
+          }
+        }
+      },
+      "AForge.Video.DirectShow/2.2.5.0": {
+        "runtime": {
+          "AForge.Video.DirectShow.dll": {
+            "assemblyVersion": "2.2.5.0",
+            "fileVersion": "2.2.5.0"
+          }
+        }
+      },
+      "AForge.Video/2.2.5.0": {
+        "runtime": {
+          "AForge.Video.dll": {
+            "assemblyVersion": "2.2.5.0",
+            "fileVersion": "2.2.5.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Ui-EasyTeach-/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AForge/2.2.5.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AForge.Video.DirectShow/2.2.5.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AForge.Video/2.2.5.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
