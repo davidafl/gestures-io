@@ -4,61 +4,79 @@ import keyboard_module as kbm
 import time
 
 
-DELAY_TIME = 0.75
+class main:
 
-if __name__ == "__main__":
+    def __init__(self):
 
-    cap = cv2.VideoCapture(0)
-    detector = htm.HandDetector(detectionCon=0.8, maxHands=2)
-    run = True
-    altTabIsPress = False
+        self.run = False   
+        self.DELAY_TIME = 0.75
+        self.cap = cv2.VideoCapture(0)
+        self.detector = htm.HandDetector(detectionCon=0.8, maxHands=2)
+        self.altTabIsPress = False
 
-    while run:
-        success, img = cap.read()
-        hands, img = detector.findHands(img)  # With Draw
+    def get_video(self):
+        return self.cap
+
+    def stopLoop(self):
+        self.run = False
+
+    def startLoop(self):
+        self.run = True
+
+    def is_running(self):
+        return self.run
+
+    def run_video(self):
+        success, img = self.cap.read()
+        hands, img = self.detector.findHands(img)  # With Draw
 
         # fingers1, fingers2 = 0, 0
         #
         if hands:
-            # Hand 1
+            
             hand1 = hands[0]
-            fingers1 = detector.fingersUp(hand1)
+            fingers1 = self.detector.fingersUp(hand1)
 
             if len(hands) == 2:
                 hand2 = hands[1]
 
-                leftHand, rightHand = detector.returnLeftRightHand(hand1, hand2)
+                leftHand, rightHand = self.detector.returnLeftRightHand(hand1, hand2)
 
-                if altTabIsPress:
-                    if not detector.ifHandIs_AltTab(leftHand):
-                        altTabIsPress = False
+                if self.altTabIsPress:
+                    if not self.detector.ifHandIs_AltTab(leftHand):
+                        self.altTabIsPress = False
                         kbm.closeAltTab()
                     else:
-                        kbm.pressArrowByString(detector.checkDirection(rightHand, 1))
-                        time.sleep(DELAY_TIME)
+                        kbm.pressArrowByString(self.detector.checkDirection(rightHand, 1))
+                        time.sleep(self.DELAY_TIME)
 
                 else:
-                    if detector.ifHandIs_AltTab(leftHand):
-                        altTabIsPress = True
+                    if self.detector.ifHandIs_AltTab(leftHand):
+                        self.altTabIsPress = True
                         kbm.openAltTab()
 
-                if detector.ifHandIs_Close(leftHand):
+                if self.detector.ifHandIs_Close(leftHand):
 
                     lmList1 = rightHand["lmList"]  # List of 21 Landmarks points
 
-                    if detector.checkDirection(rightHand, 1) == detector.checkDirection(rightHand, 2):
-                        kbm.scrollMouseByString(detector.checkDirection(rightHand, 1))
-                        time.sleep(DELAY_TIME * 0.75)
+                    if self.detector.checkDirection(rightHand, 1) == self.detector.checkDirection(rightHand, 2):
+                        kbm.scrollMouseByString(self.detector.checkDirection(rightHand, 1))
+                        time.sleep(self.DELAY_TIME * 0.75)
 
                     else:
-                        kbm.pressArrowByString(detector.checkDirection(rightHand, 1))
-                        time.sleep(DELAY_TIME)
+                        kbm.pressArrowByString(self.detector.checkDirection(rightHand, 1))
+                        time.sleep(self.DELAY_TIME)
 
         # if no hands in video
         else:
-            if altTabIsPress:
+            if self.altTabIsPress:
                 altTabIsPress = False
                 kbm.closeAltTab()
 
-        cv2.imshow("Image", img)
-        cv2.waitKey(1)
+        # cv2.imshow("Image", img)
+        # cv2.waitKey(1)
+
+        
+if __name__ == "__main__":
+    a = main()
+    a.main()
