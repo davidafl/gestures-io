@@ -8,11 +8,8 @@ from main import main
 import customtkinter
 import tkinter.messagebox
 import sys
+from tkinter import messagebox
 
-# def stop_video_stream():
-#     cap = mymain.get_video()
-#     cap.release()
-#     # lmain.destroy()
 
 #https://www.youtube.com/watch?v=UdCSiZR8xYY
 
@@ -31,15 +28,9 @@ class App(customtkinter.CTk):
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
         self.resizable(False, False)
         
-        
-
-        
         # Setting icon of master window
-        icon = PhotoImage(file = 'EasyTeachLogo.png')
+        icon = PhotoImage(file = "C:/Users/doron/OneDrive/שולחן העבודה/final project/EasyTeach/branch_main/EasyTeachLogo.png")
         self.iconphoto(False, icon)
-
-
-        # self.minsize(App.WIDTH, App.HEIGHT)
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         if sys.platform == "darwin":
@@ -124,9 +115,6 @@ class App(customtkinter.CTk):
 
         self.switch_2.select()
 
-    def button_event(self):
-        print("Button pressed")
-
     def change_mode(self):
         if self.switch_2.get() == 1:
             customtkinter.set_appearance_mode("dark")
@@ -139,7 +127,7 @@ class App(customtkinter.CTk):
 
     def start(self):
         self.video_stream()    
-        self.after(1000, self.the_loop)
+        self.after(1, self.the_loop)
         self.mainloop()
 
 
@@ -161,17 +149,37 @@ class App(customtkinter.CTk):
 
 
     def help_function(self):
-        print("Help")
+        self.wm_state('iconic')
+        window = customtkinter.CTkToplevel(self)
+        window.geometry("500x500")
+        window.title("Help")
+        label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
+        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command =lambda: self.exit_top_window(window))
+        b.pack(padx=20, pady=20)
 
 
     def about_function(self):
-        pass
+        self.wm_state('iconic')
+        window = customtkinter.CTkToplevel(self)
+        window.geometry("500x500")
+        window.title("About")
+        label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
+        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command = lambda: self.exit_top_window(window))
+        b.pack(padx=20, pady=20)
+
+
+    def exit_top_window(self, window):
+        window.destroy()
+        self.wm_state('zoomed') 
+        self.wm_state('normal') 
 
 
     def the_loop(self):
         if self.mymain.is_running():
             self.mymain.run_video()
-        self.after(1000, self.the_loop) 
+        self.after(1, self.the_loop) 
 
 
     def video_stream(self):
