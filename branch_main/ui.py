@@ -1,12 +1,12 @@
 from tkinter import *
 import tkinter
-from turtle import position
+from turtle import begin_fill, position, width
 from PIL import ImageTk, Image
+from matplotlib import backends
 import cv2
 from main import main
 import customtkinter
 import tkinter.messagebox
-import customtkinter
 import sys
 
 # def stop_video_stream():
@@ -29,6 +29,16 @@ class App(customtkinter.CTk):
 
         self.title("EasyTeach")
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
+        self.resizable(False, False)
+        
+        
+
+        
+        # Setting icon of master window
+        icon = PhotoImage(file = 'EasyTeachLogo.png')
+        self.iconphoto(False, icon)
+
+
         # self.minsize(App.WIDTH, App.HEIGHT)
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -59,10 +69,17 @@ class App(customtkinter.CTk):
         self.frame_left.grid_rowconfigure(8, minsize=20)    # empty row with minsize as spacing
         self.frame_left.grid_rowconfigure(11, minsize=10)  # empty row with minsize as spacing
 
+        # #############################
+        # img = ImageTk.PhotoImage(file = "EasyTeachLogo.png")
+    
+        # self.logo = Label(self.frame_left, image=img , borderwidth = 0 , highlightthickness = 0)
+        # self.logo.image = img
+        # self.logo.grid(row=0, column=0, columnspan=2, sticky="nswe")
+        # #############################
 
         self.label_1 = customtkinter.CTkLabel(master=self.frame_left,
-                                              text="CustomTkinter",
-                                              text_font=("Roboto Medium", -16))  # font name and size in px
+                                              text="EasyTeach",
+                                              text_font=("Roboto Medium", -25))  # font name and size in px
         self.label_1.grid(row=1, column=0, pady=10, padx=10)
 
         self.button_start = customtkinter.CTkButton(master=self.frame_left,
@@ -101,32 +118,9 @@ class App(customtkinter.CTk):
         self.switch_2.grid(row=10, column=0, pady=10, padx=20, sticky="w")
 
         # ============ frame_right ============
-
-        ####################
-       
-        # Create a label in the frame
-       
-        ####################
-
-        # configure grid layout (3x7)
-        # for i in [0, 1, 2, 3]:
-        #     self.frame_right.rowconfigure(i, weight=1)
-            
-        #self.frame_right.rowconfigure(7, weight=10)
-        
-        # self.frame_right.columnconfigure(0, weight=1)
-        # self.frame_right.columnconfigure(1, weight=1)
-        #self.frame_right.columnconfigure(2, weight=0)
-        
-        # self.frame_info = customtkinter.CTkFrame(master=self.frame_right)
-        # self.frame_info.grid(row=0, column=0, columnspan=2, rowspan=8, pady=20, padx=20, sticky="nsew")
-        #app = Frame(self.frame_right, bg = "black")
         self.lmain = Label(self.frame_right, bg = "black")
-        self.lmain.grid()
+        self.lmain.grid(padx=20, pady=20)
         # ============ frame_right -> frame_info ============
-
-        # self.frame_info.rowconfigure(0, weight=1)
-        # self.frame_info.columnconfigure(0, weight=1)
 
         self.switch_2.select()
 
@@ -142,12 +136,13 @@ class App(customtkinter.CTk):
     def on_closing(self, event=0):
         self.destroy()
 
+
     def start(self):
         self.video_stream()    
         self.after(1000, self.the_loop)
         self.mainloop()
 
-        ##################
+
     def start_function(self):
         
         App.live = "LIVE"
@@ -172,16 +167,23 @@ class App(customtkinter.CTk):
     def about_function(self):
         pass
 
+
     def the_loop(self):
         if self.mymain.is_running():
             self.mymain.run_video()
         self.after(1000, self.the_loop) 
 
+
     def video_stream(self):
 
         cap = self.mymain.get_video()
         _, frame = cap.read()
-
+        
+        #set the size of the image to be displayed in the window in percent of the window size (0.0 - 1.0)
+        frame = cv2.resize(frame, (App.WIDTH - 180 -20 - 20 -20 -2 ,
+                                   App.HEIGHT - 20 - 20 - 20 - 20),
+                                   interpolation = cv2.INTER_AREA)
+        
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)  
         cv2.putText(cv2image, f'{App.live}', (400, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3,cv2.LINE_AA)
         img = Image.fromarray(cv2image)
@@ -189,7 +191,7 @@ class App(customtkinter.CTk):
         self.lmain.imgtk = imgtk
         self.lmain.configure(image=imgtk)
         self.lmain.after(1, self.video_stream) 
-        ##################
+
 
 if __name__ == "__main__":
     print("start UI")
@@ -198,4 +200,3 @@ if __name__ == "__main__":
 
 
  
-
