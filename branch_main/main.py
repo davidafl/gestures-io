@@ -3,6 +3,7 @@ import hand_tracking_module as htm
 import keyboard_module as kbm
 import time
 
+show_window_of_hand_tracing = False
 
 class main:
 
@@ -72,11 +73,14 @@ class main:
             if self.altTabIsPress:
                 altTabIsPress = False
                 kbm.closeAltTab()
-
-        # cv2.imshow("Image", img)
-        # cv2.waitKey(1)
+        
+        if show_window_of_hand_tracing:
+            cv2.imshow("Image", img)
+            cv2.waitKey(1)
 
         
 if __name__ == "__main__":
-    a = main()
-    a.main()
+    my_main = main()
+    show_window_of_hand_tracing = True
+    while show_window_of_hand_tracing:
+        my_main.run_video()

@@ -1,3 +1,4 @@
+from doctest import master
 from tkinter import *
 import tkinter
 from turtle import begin_fill, position, width
@@ -15,8 +16,12 @@ from tkinter import messagebox
 
 class App(customtkinter.CTk):
 
-    WIDTH = 1000
-    HEIGHT = 600
+    # WIDTH = 1000
+    # HEIGHT = 600
+    # live = ""
+
+    WIDTH = 666
+    HEIGHT = 400 
     live = ""
 
     def __init__(self):
@@ -29,8 +34,10 @@ class App(customtkinter.CTk):
         self.resizable(False, False)
         
         # Setting icon of master window
-        icon = PhotoImage(file = "C:/Users/doron/OneDrive/שולחן העבודה/final project/EasyTeach/branch_main/EasyTeachLogo.png")
+        icon = PhotoImage(file = "resources\EasyTeachLogo.png")
         self.iconphoto(False, icon)
+        self.radio_var = tkinter.IntVar(value=0)
+        
 
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         if sys.platform == "darwin":
@@ -103,23 +110,27 @@ class App(customtkinter.CTk):
                                         command=self.about_function)
         self.button_about.grid(row=6, column=0, pady=10, padx=20)
 
-        self.switch_2 = customtkinter.CTkSwitch(master=self.frame_left,
-                                                text="Dark Mode",
-                                                command=self.change_mode)
-        self.switch_2.grid(row=10, column=0, pady=10, padx=20, sticky="w")
+        # self.switch_2 = customtkinter.CTkSwitch(master=self.frame_left,
+        #                                         text="Dark Mode",
+        #                                         command=self.change_mode)
+        # self.switch_2.grid(row=10, column=0, pady=10, padx=20, sticky="w")
 
         # ============ frame_right ============
         self.lmain = Label(self.frame_right, bg = "black")
         self.lmain.grid(padx=20, pady=20)
         # ============ frame_right -> frame_info ============
 
-        self.switch_2.select()
+        # self.switch_2.select()
 
     def change_mode(self):
-        if self.switch_2.get() == 1:
-            customtkinter.set_appearance_mode("dark")
+
+        if self.radio_var == 0:
+            if customtkinter.get_appearance_mode() != "Light": 
+                customtkinter.set_appearance_mode("light")
         else:
-            customtkinter.set_appearance_mode("light")
+            if customtkinter.get_appearance_mode() != "Dark":
+                customtkinter.set_appearance_mode("dark")
+    
 
     def on_closing(self, event=0):
         self.destroy()
@@ -145,7 +156,52 @@ class App(customtkinter.CTk):
 
 
     def settings_function(self):
-        pass
+        self.wm_state('iconic')
+        window = customtkinter.CTkToplevel(self)
+        window.geometry("500x500")
+        window.title("Setings")
+        label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
+
+        
+        # switch_dark_mode = customtkinter.CTkSwitch(master=window,
+        #                                         text="Dark Mode",
+        #                                         command=self.change_mode_dark_light)
+        
+        # if customtkinter.get_appearance_mode() == "Dark":
+        #     switch_dark_mode.select(from_variable_callback = False)
+
+        # else:
+        #     switch_dark_mode.deselect(from_variable_callback = False)
+
+        
+
+        label_radio_group = customtkinter.CTkLabel(master=window,
+                                                        text="Select display mode:")
+        # label_radio_group.grid(row=0, column=2, columnspan=1, pady=20, padx=10, sticky="")
+
+        radio_button_0 = customtkinter.CTkRadioButton(master=window,
+                                                           variable=self.radio_var,
+                                                           value=0,
+                                                           text="Light Mode")
+        # radio_button_0.grid(row=1, column=2, pady=10, padx=20, sticky="n")
+
+        radio_button_1 = customtkinter.CTkRadioButton(master=window,
+                                                           variable=self.radio_var,
+                                                           value=1,
+                                                           text="Dark Mode")
+        # radio_button_1.grid(row=2, column=2, pady=10, padx=20, sticky="n")
+
+
+        b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command =lambda: self.exit_top_window(window))
+        
+        label_radio_group.pack(side=TOP, fill=X, padx=10, pady=10)
+        radio_button_0.pack(side=TOP, fill=X, padx=10, pady=10)
+        radio_button_1.pack(side=TOP, fill=X, padx=10, pady=10)
+
+        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        # switch_dark_mode.pack(side="top", fill="both", expand=True, padx=40, pady=40)
+        b.pack(padx=20, pady=20)        
+
 
 
     def help_function(self):
@@ -171,9 +227,11 @@ class App(customtkinter.CTk):
 
 
     def exit_top_window(self, window):
+        self.change_mode()
         window.destroy()
         self.wm_state('zoomed') 
-        self.wm_state('normal') 
+        self.wm_state('normal')
+
 
 
     def the_loop(self):
