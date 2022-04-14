@@ -16,13 +16,13 @@ from tkinter import messagebox
 
 class App(customtkinter.CTk):
 
-    # WIDTH = 1000
-    # HEIGHT = 600
-    # live = ""
-
-    WIDTH = 666
-    HEIGHT = 400 
+    WIDTH = 1000
+    HEIGHT = 600
     live = ""
+
+    # WIDTH = 666
+    # HEIGHT = 400 
+    # live = ""
 
     def __init__(self):
         super().__init__()
@@ -110,86 +110,50 @@ class App(customtkinter.CTk):
                                         command=self.about_function)
         self.button_about.grid(row=6, column=0, pady=10, padx=20)
 
-        # self.switch_2 = customtkinter.CTkSwitch(master=self.frame_left,
-        #                                         text="Dark Mode",
-        #                                         command=self.change_mode)
-        # self.switch_2.grid(row=10, column=0, pady=10, padx=20, sticky="w")
-
-        # ============ frame_right ============
+        #video frame
         self.lmain = Label(self.frame_right, bg = "black")
         self.lmain.grid(padx=20, pady=20)
-        # ============ frame_right -> frame_info ============
 
-        # self.switch_2.select()
-
-    def change_mode(self):
-
-        if self.radio_var == 0:
-            if customtkinter.get_appearance_mode() != "Light": 
-                customtkinter.set_appearance_mode("light")
-        else:
-            if customtkinter.get_appearance_mode() != "Dark":
-                customtkinter.set_appearance_mode("dark")
     
+    def update_display_mode(self):
+       customtkinter.set_appearance_mode("light") if self.radio_var.get() == 0 else customtkinter.set_appearance_mode("dark")
 
     def on_closing(self, event=0):
         self.destroy()
 
-
     def start(self):
         self.video_stream()    
-        self.after(1, self.the_loop)
+        self.after(1000, self.the_loop)
         self.mainloop()
 
-
     def start_function(self):
-        
+        print("start button")
         App.live = "LIVE"
         self.mymain.startLoop()
         self.the_loop()
 
-
-    def stop_function(self):
-    
+    def stop_function(self):   
         App.live = ""
         self.mymain.stopLoop()
 
-
     def settings_function(self):
-        self.wm_state('iconic')
         window = customtkinter.CTkToplevel(self)
         window.geometry("500x500")
         window.title("Setings")
         label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
 
-        
-        # switch_dark_mode = customtkinter.CTkSwitch(master=window,
-        #                                         text="Dark Mode",
-        #                                         command=self.change_mode_dark_light)
-        
-        # if customtkinter.get_appearance_mode() == "Dark":
-        #     switch_dark_mode.select(from_variable_callback = False)
-
-        # else:
-        #     switch_dark_mode.deselect(from_variable_callback = False)
-
-        
-
         label_radio_group = customtkinter.CTkLabel(master=window,
                                                         text="Select display mode:")
-        # label_radio_group.grid(row=0, column=2, columnspan=1, pady=20, padx=10, sticky="")
 
         radio_button_0 = customtkinter.CTkRadioButton(master=window,
                                                            variable=self.radio_var,
                                                            value=0,
                                                            text="Light Mode")
-        # radio_button_0.grid(row=1, column=2, pady=10, padx=20, sticky="n")
 
         radio_button_1 = customtkinter.CTkRadioButton(master=window,
                                                            variable=self.radio_var,
                                                            value=1,
                                                            text="Dark Mode")
-        # radio_button_1.grid(row=2, column=2, pady=10, padx=20, sticky="n")
 
 
         b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command =lambda: self.exit_top_window(window))
@@ -197,15 +161,10 @@ class App(customtkinter.CTk):
         label_radio_group.pack(side=TOP, fill=X, padx=10, pady=10)
         radio_button_0.pack(side=TOP, fill=X, padx=10, pady=10)
         radio_button_1.pack(side=TOP, fill=X, padx=10, pady=10)
-
         label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
-        # switch_dark_mode.pack(side="top", fill="both", expand=True, padx=40, pady=40)
-        b.pack(padx=20, pady=20)        
-
-
-
+        b.pack(padx=20, pady=20)
+        
     def help_function(self):
-        self.wm_state('iconic')
         window = customtkinter.CTkToplevel(self)
         window.geometry("500x500")
         window.title("Help")
@@ -213,10 +172,9 @@ class App(customtkinter.CTk):
         label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
         b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command =lambda: self.exit_top_window(window))
         b.pack(padx=20, pady=20)
-
-
+        self.update()
+        
     def about_function(self):
-        self.wm_state('iconic')
         window = customtkinter.CTkToplevel(self)
         window.geometry("500x500")
         window.title("About")
@@ -225,20 +183,14 @@ class App(customtkinter.CTk):
         b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command = lambda: self.exit_top_window(window))
         b.pack(padx=20, pady=20)
 
-
     def exit_top_window(self, window):
-        self.change_mode()
         window.destroy()
-        self.wm_state('zoomed') 
-        self.wm_state('normal')
-
-
+        self.update_display_mode()
 
     def the_loop(self):
         if self.mymain.is_running():
             self.mymain.run_video()
-        self.after(1, self.the_loop) 
-
+        self.after(1000, self.the_loop) 
 
     def video_stream(self):
 
@@ -249,9 +201,19 @@ class App(customtkinter.CTk):
         frame = cv2.resize(frame, (App.WIDTH - 180 -20 - 20 -20 -2 ,
                                    App.HEIGHT - 20 - 20 - 20 - 20),
                                    interpolation = cv2.INTER_AREA)
-        
+
+        font = cv2.FONT_HERSHEY_SIMPLEX
+
+        cv2.putText(frame, 
+                f'{App.live}', 
+                (50, 50), 
+                font, 3, 
+                (0, 0 , 255), 
+                3, 
+                cv2.LINE_4)
+
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)  
-        cv2.putText(cv2image, f'{App.live}', (400, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 3,cv2.LINE_AA)
+
         img = Image.fromarray(cv2image)
         imgtk = ImageTk.PhotoImage(image=img)
         self.lmain.imgtk = imgtk
