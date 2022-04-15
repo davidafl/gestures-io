@@ -10,6 +10,7 @@ import customtkinter
 import tkinter.messagebox
 import sys
 from tkinter import messagebox
+import numpy as np
 
 
 #https://www.youtube.com/watch?v=UdCSiZR8xYY
@@ -163,7 +164,8 @@ class App(customtkinter.CTk):
         radio_button_1.pack(side=TOP, fill=X, padx=10, pady=10)
         label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
         b.pack(padx=20, pady=20)
-        
+        self.update()
+
     def help_function(self):
         window = customtkinter.CTkToplevel(self)
         window.geometry("500x500")
@@ -173,7 +175,7 @@ class App(customtkinter.CTk):
         b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command =lambda: self.exit_top_window(window))
         b.pack(padx=20, pady=20)
         self.update()
-        
+
     def about_function(self):
         window = customtkinter.CTkToplevel(self)
         window.geometry("500x500")
@@ -202,15 +204,35 @@ class App(customtkinter.CTk):
                                    App.HEIGHT - 20 - 20 - 20 - 20),
                                    interpolation = cv2.INTER_AREA)
 
-        font = cv2.FONT_HERSHEY_SIMPLEX
 
-        cv2.putText(frame, 
-                f'{App.live}', 
-                (50, 50), 
-                font, 3, 
-                (0, 0 , 255), 
-                3, 
-                cv2.LINE_4)
+        #############
+        
+        logo = cv2.imread("resources\EasyTeachLogo.png")
+        size = 100
+        logo = cv2.resize(logo,(size,size))
+
+        img2gray = cv2.cvtColor(logo, cv2.COLOR_BGR2GRAY)
+        ret, mask = cv2.threshold(img2gray, 1, 255, cv2.THRESH_BINARY)
+
+        
+        # Region of Interest (ROI), where we want
+        # to insert logo
+        roi = frame[-size-10:-10, -size-10:-10]
+        
+        # Set an index of where the mask is
+        roi[np.where(mask)] = 0
+        roi += logo
+        
+        ##########
+
+        # font = cv2.FONT_HERSHEY_TRIPLEX
+        # cv2.putText(frame, 
+        #         f'{App.live}', 
+        #         (50, 50), 
+        #         font, 1, 
+        #         (0, 0 , 255), 
+        #         3, 
+        #         cv2.LINE_4)
 
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)  
 
