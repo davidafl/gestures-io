@@ -1,0 +1,24 @@
+{
+  "loop_delay": "70",
+  "video_delay": 10,
+  "gesture_delay": 800,
+  "num_signs": 3,
+  "window_width": 1242,
+  "window_height": 680,
+  "logo_file": "resources/EasyTeachLogo.png",
+  "classifier": {
+    "width": 1242,
+    "height": 680,
+    "min_detection_confidence": 0.7,
+    "min_tracking_confidence": 0.5,
+    "use_static_image_mode": "True"
+  },
+  "actions": {
+    "['Open','Open']": "openAltTab",
+    "['Close','Close']": "closeAltTab",
+    "['PointUp','Open']": "upTab",
+    "['PointRight','Open']": "nextTab",
+    "['PointLeft','Open']": "prevTab",
+    "['PointDown','Open']": "downTab"
+  }
+}
