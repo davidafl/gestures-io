@@ -26,7 +26,7 @@ class App(customtkinter.CTk):
         with open(self.config_file, 'r') as f:
             self.config = json.loads(f.read())
 
-        self.mymain = AppMain(self)
+        self.mymain = AppMain(self, self.config)
         self.settings_window = None
 
         self.title("EasyTeach")
@@ -175,10 +175,11 @@ class App(customtkinter.CTk):
             return
 
         self.settings_window = customtkinter.CTkToplevel(self, name="settings")
-        self.settings_window.geometry("500x500")
+        self.settings_window.resizable(width = True, height = True)
+        #self.settings_window.geometry("500x300")
         self.settings_window.title("Settings")
-        self.settings_window.columnconfigure(2, weight=1)
-        self.settings_window.rowconfigure(7, weight=1)
+        self.settings_window.grid_columnconfigure(3, weight=1)
+        self.settings_window.grid_rowconfigure(7, weight=1)
 
         #label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
 
@@ -212,25 +213,52 @@ class App(customtkinter.CTk):
         # set input value to current timer delay
         self.input_loop_delay.insert(0, str(self.config['loop_delay']))
 
-        label_action_altab = customtkinter.CTkLabel(master=self.settings_window, text="Gesture for alt-tab:")
-        label_action_altab.grid(row=4, column=0, sticky=W, padx=10, pady=10)
-        self.input_action_altab  = customtkinter.CTkEntry(master=self.settings_window, width=100)
-        self.input_action_altab.grid(row=4, column=1, sticky=W, padx=10, pady=10)
+        # label_action_altab = customtkinter.CTkLabel(master=self.settings_window, text="Gesture for alt-tab:")
+        # label_action_altab.grid(row=4, column=0, sticky=W, padx=10, pady=10)
+        # self.input_action_altab  = customtkinter.CTkEntry(master=self.settings_window, width=100)
+        # self.input_action_altab.grid(row=4, column=1, sticky=W, padx=10, pady=10)
+        #
+        # # set input value to current timer delay
+        # # find key with value 'openAltTab' in self.config['actions'] array
+        # key = list(filter(lambda x: self.config['actions'][x] == 'openAltTab', self.config['actions'].keys()))[0]
+        # self.input_action_altab.insert(0, key)
 
-        # set input value to current timer delay
-        # find key with value 'openAltTab' in self.config['actions'] array
-        key = list(filter(lambda x: self.config['actions'][x] == 'openAltTab', self.config['actions'].keys()))[0]
-        self.input_action_altab.insert(0, key)
 
+        #gestures
+        # left hand on row 5
+        label = customtkinter.CTkLabel(master=self.settings_window, text="Gestures:")
+        label.grid(row=5, column=0, sticky=W, padx=5, pady=1)
+        label = customtkinter.CTkLabel(master=self.settings_window, text="Action:")
+        label.grid(row=6, column=0, sticky=W, padx=5, pady=1)
+        label = customtkinter.CTkLabel(master=self.settings_window, text="Left hand:")
+        label.grid(row=6, column=1, sticky=W, padx=5, pady=1)
+        label = customtkinter.CTkLabel(master=self.settings_window, text="Right hand:")
+        label.grid(row=6, column=2, sticky=W, padx=5, pady=1)
 
-        # testing dropdown
-        v1 = tkinter.StringVar(app)
-        v1.set(self.mymain.get_action_labels()[0])
-        dropdown = OptionMenu(master=self.settings_window, variable=v1, value=self.mymain.get_action_labels()[0] , values=self.mymain.get_action_labels().toList())
-        dropdown.grid(row=5, column=0, sticky=W, padx=10, pady=10)
+        # gestures
+        self.actionVar = tkinter.StringVar(app)
+        self.actionVar.set(list(self.config['actions'].values())[0])
+        self.actionVar.trace("w", lambda name, index, mode, actionVar=self.actionVar: self.action_changed(self.actionVar))
+        optionlist = list(self.config['actions'].values())
+        dropdown = tkinter.OptionMenu(self.settings_window, self.actionVar, *optionlist)
+        dropdown.grid(row=7, column=0, sticky=W, padx=5, pady=1)
+        #right hand
+        self.actionVarLeft = tkinter.StringVar(app)
+        self.actionVarLeft.set(self.mymain.get_action_labels()[0])
+        self.actionVarLeft.trace("w", lambda name, index, mode, actionVar=self.actionVarLeft: self.action_changed(self.actionVarLeft))
+        optionlist = self.mymain.get_action_labels()
+        dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarLeft, *optionlist)
+        dropdown.grid(row=7, column=1, sticky=W, padx=5, pady=1)
+        #right hand
+        self.actionVarRight = tkinter.StringVar(app)
+        self.actionVarRight.set(self.mymain.get_action_labels()[0])
+        self.actionVarRight.trace("w", lambda name, index, mode, actionVar=self.actionVarRight: self.action_changed(self.actionVarRight))
+        optionlist = self.mymain.get_action_labels()
+        dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarRight, *optionlist)
+        dropdown.grid(row=7, column=2, sticky=W, padx=5, pady=1)
 
         # ok button
-        b.grid(row=6, column=1, sticky=E, padx=30, pady=10)
+        b.grid(row=8, column=3, sticky=E, padx=30, pady=10)
 
     def help_function(self):
         #self.wm_state('iconic')
@@ -261,8 +289,21 @@ class App(customtkinter.CTk):
     def exit_settings_window(self, window):
         # save settings
         self.config['loop_delay'] = self.input_loop_delay.get()
-        print ("what: ", self.input_action_altab.get())
-        self.config['actions'][self.input_action_altab.get()] = 'openAltTab'
+
+        # update gesture
+        # first remove gesture already defined
+        # find index of value self.actionVar.get()
+        index = list(self.config['actions'].values()).index(self.actionVar.get())
+        # remove from config
+        del self.config['actions'][list(self.config['actions'].keys())[index]]
+        # add new gesture
+        # create a str like "['Close', 'Open']" as an index to the action
+        indexgesture = str([self.actionVarLeft.get(), self.actionVarRight.get()]).replace(" ", "")
+        self.config['actions'][indexgesture] = self.actionVar.get()
+
+        # print ("Action:" + self.actionVar.get())
+        # print ("Left gesture:" + self.actionVarLeft.get())
+        # print ("Right gesture:" + self.actionVarRight.get())
 
         # save json config
         window.destroy()
@@ -274,6 +315,9 @@ class App(customtkinter.CTk):
     def save_config(self):
         with open(self.config_file, 'w') as outfile:
             json.dump(self.config, outfile)
+        # flush buffer
+        outfile.close()
+
 
     def the_loop(self):
         # print("the loop")
@@ -321,6 +365,7 @@ class App(customtkinter.CTk):
         roi += logo
 
         cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+
         img = Image.fromarray(cv2image)
         #img = Image.fromarray(frame)
         imgtk = ImageTk.PhotoImage(image=img)
@@ -329,6 +374,13 @@ class App(customtkinter.CTk):
 
         # restart the timer
         self.lmain.after(self.config['video_delay'], self.video_stream)
+
+    def action_changed(self, actionVar):
+        # print self.actionVarRight.get(), self.actionVarLeft.get(), self.actionVar.get())
+        print ("********")
+        print ("Action:" + self.actionVar.get())
+        print ("Left gesture:" + self.actionVarLeft.get())
+        print ("Right gesture:" + self.actionVarRight.get())
 
 
 if __name__ == "__main__":

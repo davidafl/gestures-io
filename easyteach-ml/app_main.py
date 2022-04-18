@@ -26,7 +26,7 @@ SIGN_ID_POINT_LEFT = 4
 SIGN_ID_POINT_RIGHT = 5
 
 class AppMain:
-    def __init__(self, tkUI):
+    def __init__(self, tkUI, config):
 
         self.run = True
         self.tk = tkUI
@@ -36,8 +36,8 @@ class AppMain:
         self.altTabIsPress = False
 
         # load config.json
-        with open("config.json", 'r') as f:
-            self.config = json.loads(f.read())
+        self.config = config
+
         # init params from config
         self.get_args()
 
@@ -155,7 +155,7 @@ class AppMain:
         return self.debug_image;
 
     def get_action_labels(self):
-        return self.point_history_classifier_labels
+        return self.keypoint_classifier_labels
 
     def run_video(self):
         # ("run_video")
@@ -245,6 +245,8 @@ class AppMain:
             key = str(self.actionMapping.convert_signs_to_array(self.recognizedSigns))
             # remove spaces from key
             key = key.replace(" ", "")
+            print("the key is: " + key)
+            print(self.config['actions'])
 
             # if self.config['actions'][key] is defined we recognize the gesture
             if key in self.config['actions']:

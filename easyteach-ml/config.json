@@ -19,6 +19,17 @@
     "['PointUp','Open']": "upTab",
     "['PointRight','Open']": "nextTab",
     "['PointLeft','Open']": "prevTab",
+    "['PointDown','Open']": "downTab",
+    "['PointUp','None']": "upArrow",
+    "['PointDown','None']": "downArrow"
+  },
+  "actionsDefault": {
+    "['Open','Open']": "openAltTab",
+    "['Close','Close']": "closeAltTab",
+    "['PointUp','Open']": "upTab",
+    "['PointRight','Open']": "nextTab",
+    "['PointLeft','Open']": "prevTab",
     "['PointDown','Open']": "downTab"
+
   }
 }

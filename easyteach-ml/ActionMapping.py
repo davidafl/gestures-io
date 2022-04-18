@@ -56,4 +56,11 @@ class ActionMapping:
         if (self.altTabIsPressed and action == "downTab"):
             kbm.pressDownArrow()
 
+        if(action == "downArrow"):
+            kbm.pressDownArrow()
+
+        if(action == "upArrow"):
+            kbm.pressUpArrow()
+
+
 
