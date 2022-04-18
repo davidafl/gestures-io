@@ -7,6 +7,7 @@ import customtkinter
 import tkinter.messagebox
 import sys
 import numpy as np
+import keyboard_module as kbm
 
 #https://www.youtube.com/watch?v=UdCSiZR8xYY
 from app_main import AppMain
@@ -163,7 +164,7 @@ class App(customtkinter.CTk):
         :return:
         """
         App.live = ""
-
+        kbm.closeAltTab()
         # cancel current timer
         self.after_cancel(self.the_loop_timer_id);
         # stop video
@@ -171,8 +172,8 @@ class App(customtkinter.CTk):
 
 
     def settings_function(self):
-        if (self.settings_window is not None):
-            return
+
+        self.stop_function()
 
         self.settings_window = customtkinter.CTkToplevel(self, name="settings")
         self.settings_window.resizable(width = True, height = True)
@@ -304,6 +305,7 @@ class App(customtkinter.CTk):
         # create a str like "['Close', 'Open']" as an index to the action
         indexgesture = str([self.actionVarLeft.get(), self.actionVarRight.get()]).replace(" ", "")
         self.config['actions'][indexgesture] = self.actionVar.get()
+
         self.update_display_mode()
         self.save_config()
 
@@ -382,23 +384,15 @@ class App(customtkinter.CTk):
         :param actionVar:
         :return:
         """
-        #self.actionVarLeft.set(self.config['actions'][str([actionVar.get(), self.actionVarRight.get()]).replace(" ", "")][0])
-
         # find key of value self.actionVar.get() in self.config['actions']
         for key, value in self.config['actions'].items():
             if value == actionVar.get():
-                print("key: " + key)
                 # extract the 2 actions from the key
                 gestures = str(key).replace(" ", "").replace("[", "").replace("]", "").replace("'","").split(",")
-                print("gestures: " + str(gestures))
                 self.actionVarLeft.set(gestures[0])
                 self.actionVarRight.set(gestures[1])
                 break
 
-        #print("index: " + str(index))
-        #print(self.config["actions"][index])
-        #self.actionVarLeft.set( index [0])
-        #self.actionVarRight.set( index [1])
 
 
 if __name__ == "__main__":
