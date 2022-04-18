@@ -194,8 +194,6 @@ class App(customtkinter.CTk):
                                                            value=1,
                                                            text="Dark Mode")
 
-        b = customtkinter.CTkButton(master=self.settings_window, text="Okay",fg_color=("gray75", "gray30"),
-                                    command =lambda: self.exit_settings_window(self.settings_window))
         label_radio_group.grid(row=0, column=0, sticky=W, padx=10, pady=10)
         radio_button_0.grid(row=1, column=0, sticky=W, padx=10, pady=10)
         radio_button_1.grid(row=2, column=0, sticky=W, padx=10, pady=10)
@@ -235,7 +233,7 @@ class App(customtkinter.CTk):
         label = customtkinter.CTkLabel(master=self.settings_window, text="Right hand:")
         label.grid(row=6, column=2, sticky=W, padx=5, pady=1)
 
-        # gestures
+        # actions
         self.actionVar = tkinter.StringVar(app)
         self.actionVar.set(list(self.config['actions'].values())[0])
         self.actionVar.trace("w", lambda name, index, mode, actionVar=self.actionVar: self.action_changed(self.actionVar))
@@ -245,20 +243,26 @@ class App(customtkinter.CTk):
         #right hand
         self.actionVarLeft = tkinter.StringVar(app)
         self.actionVarLeft.set(self.mymain.get_action_labels()[0])
-        self.actionVarLeft.trace("w", lambda name, index, mode, actionVar=self.actionVarLeft: self.action_changed(self.actionVarLeft))
+        #self.actionVarLeft.trace("w", lambda name, index, mode, actionVar=self.actionVarLeft: self.action_changed(self.actionVarLeft))
         optionlist = self.mymain.get_action_labels()
         dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarLeft, *optionlist)
         dropdown.grid(row=7, column=1, sticky=W, padx=5, pady=1)
         #right hand
         self.actionVarRight = tkinter.StringVar(app)
         self.actionVarRight.set(self.mymain.get_action_labels()[0])
-        self.actionVarRight.trace("w", lambda name, index, mode, actionVar=self.actionVarRight: self.action_changed(self.actionVarRight))
+        #self.actionVarRight.trace("w", lambda name, index, mode, actionVar=self.actionVarRight: self.action_changed(self.actionVarRight))
         optionlist = self.mymain.get_action_labels()
         dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarRight, *optionlist)
         dropdown.grid(row=7, column=2, sticky=W, padx=5, pady=1)
 
         # ok button
-        b.grid(row=8, column=3, sticky=E, padx=30, pady=10)
+        button_ok = customtkinter.CTkButton(master=self.settings_window, text="Save",fg_color=("gray75", "gray30"),
+                                            command =lambda: self.save_settings_window(self.settings_window))
+        button_ok.grid(row=8, column=3, sticky=E, padx=30, pady=10)
+        # cancel button
+        button_cancel = customtkinter.CTkButton(master=self.settings_window, text="Cancel",fg_color=("gray75", "gray30"),
+                                                command =lambda: self.exit_settings_window(self.settings_window))
+        button_cancel.grid(row=8, column=2, sticky=E, padx=10, pady=10)
 
     def help_function(self):
         #self.wm_state('iconic')
@@ -286,7 +290,7 @@ class App(customtkinter.CTk):
         window.destroy()
         self.update_display_mode()
 
-    def exit_settings_window(self, window):
+    def save_settings_window(self, window):
         # save settings
         self.config['loop_delay'] = self.input_loop_delay.get()
 
@@ -300,17 +304,14 @@ class App(customtkinter.CTk):
         # create a str like "['Close', 'Open']" as an index to the action
         indexgesture = str([self.actionVarLeft.get(), self.actionVarRight.get()]).replace(" ", "")
         self.config['actions'][indexgesture] = self.actionVar.get()
+        self.update_display_mode()
+        self.save_config()
 
-        # print ("Action:" + self.actionVar.get())
-        # print ("Left gesture:" + self.actionVarLeft.get())
-        # print ("Right gesture:" + self.actionVarRight.get())
+        self.exit_settings_window(window)
 
-        # save json config
+    def exit_settings_window(self, window):
         window.destroy()
         self.settings_window = None
-        self.update_display_mode()
-
-        self.save_config()
 
     def save_config(self):
         with open(self.config_file, 'w') as outfile:
@@ -376,11 +377,28 @@ class App(customtkinter.CTk):
         self.lmain.after(self.config['video_delay'], self.video_stream)
 
     def action_changed(self, actionVar):
-        # print self.actionVarRight.get(), self.actionVarLeft.get(), self.actionVar.get())
-        print ("********")
-        print ("Action:" + self.actionVar.get())
-        print ("Left gesture:" + self.actionVarLeft.get())
-        print ("Right gesture:" + self.actionVarRight.get())
+        """
+        update the 2 other action variables according to the selected action
+        :param actionVar:
+        :return:
+        """
+        #self.actionVarLeft.set(self.config['actions'][str([actionVar.get(), self.actionVarRight.get()]).replace(" ", "")][0])
+
+        # find key of value self.actionVar.get() in self.config['actions']
+        for key, value in self.config['actions'].items():
+            if value == actionVar.get():
+                print("key: " + key)
+                # extract the 2 actions from the key
+                gestures = str(key).replace(" ", "").replace("[", "").replace("]", "").replace("'","").split(",")
+                print("gestures: " + str(gestures))
+                self.actionVarLeft.set(gestures[0])
+                self.actionVarRight.set(gestures[1])
+                break
+
+        #print("index: " + str(index))
+        #print(self.config["actions"][index])
+        #self.actionVarLeft.set( index [0])
+        #self.actionVarRight.set( index [1])
 
 
 if __name__ == "__main__":
