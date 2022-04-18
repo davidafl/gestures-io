@@ -224,10 +224,10 @@ class App(customtkinter.CTk):
 
 
         # testing dropdown
-        # v1 = tkinter.StringVar(app)
-        # v1.set(self.mymain.get_action_labels()[0])
-        # dropdown = self.tk.OptionMenu(master=self.settings_window, variable=v1, *self.mymain.get_action_labels())
-        # dropdown.grid(row=5, column=0, sticky=W, padx=10, pady=10)
+        v1 = tkinter.StringVar(app)
+        v1.set(self.mymain.get_action_labels()[0])
+        dropdown = OptionMenu(master=self.settings_window, variable=v1, value=self.mymain.get_action_labels()[0] , values=self.mymain.get_action_labels().toList())
+        dropdown.grid(row=5, column=0, sticky=W, padx=10, pady=10)
 
         # ok button
         b.grid(row=6, column=1, sticky=E, padx=30, pady=10)
