@@ -175,95 +175,100 @@ class App(customtkinter.CTk):
 
         self.stop_function()
 
-        self.settings_window = customtkinter.CTkToplevel(self, name="settings")
-        self.settings_window.resizable(width = True, height = True)
-        #self.settings_window.geometry("500x300")
-        self.settings_window.title("Settings")
-        self.settings_window.grid_columnconfigure(3, weight=1)
-        self.settings_window.grid_rowconfigure(7, weight=1)
+        if (self.settings_window == None):
 
-        #label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
+            self.settings_window = customtkinter.CTkToplevel(self, name="settings")
+            self.settings_window.resizable(width = True, height = True)
+            #self.settings_window.geometry("500x300")
+            self.settings_window.title("Settings")
+            self.settings_window.grid_columnconfigure(3, weight=1)
+            self.settings_window.grid_rowconfigure(7, weight=1)
 
-        label_radio_group = customtkinter.CTkLabel(master=self.settings_window,
-                                                        text="Select display mode:")
-        radio_button_0 = customtkinter.CTkRadioButton(master=self.settings_window,
-                                                           variable=self.radio_var,
-                                                           value=0,
-                                                           text="Light Mode")
-        radio_button_1 = customtkinter.CTkRadioButton(master=self.settings_window,
-                                                           variable=self.radio_var,
-                                                           value=1,
-                                                           text="Dark Mode")
+            #label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
 
-        label_radio_group.grid(row=0, column=0, sticky=W, padx=10, pady=10)
-        radio_button_0.grid(row=1, column=0, sticky=W, padx=10, pady=10)
-        radio_button_1.grid(row=2, column=0, sticky=W, padx=10, pady=10)
-        #label_radio_group.pack(side=TOP, fill=X, padx=10, pady=10)
-        #radio_button_0.pack(side=TOP, fill=X, padx=10, pady=10)
-        #radio_button_1.pack(side=TOP, fill=X, padx=10, pady=10)
+            label_radio_group = customtkinter.CTkLabel(master=self.settings_window,
+                                                            text="Select display mode:")
+            radio_button_0 = customtkinter.CTkRadioButton(master=self.settings_window,
+                                                               variable=self.radio_var,
+                                                               value=0,
+                                                               text="Light Mode")
+            radio_button_1 = customtkinter.CTkRadioButton(master=self.settings_window,
+                                                               variable=self.radio_var,
+                                                               value=1,
+                                                               text="Dark Mode")
 
-        # add label and input field for setting the timer delay
-        label_timer_delay = customtkinter.CTkLabel(master=self.settings_window,text="Set timer delay:")
-        label_timer_delay.grid(row=3, column=0, sticky=W, padx=10, pady=10)
+            label_radio_group.grid(row=0, column=0, sticky=W, padx=10, pady=10)
+            radio_button_0.grid(row=1, column=0, sticky=W, padx=10, pady=10)
+            radio_button_1.grid(row=2, column=0, sticky=W, padx=10, pady=10)
+            #label_radio_group.pack(side=TOP, fill=X, padx=10, pady=10)
+            #radio_button_0.pack(side=TOP, fill=X, padx=10, pady=10)
+            #radio_button_1.pack(side=TOP, fill=X, padx=10, pady=10)
 
-        self.input_loop_delay = customtkinter.CTkEntry(master=self.settings_window, width=100)
-        self.input_loop_delay.grid(row=3, column=1, sticky=W, padx=10, pady=10)
+            # add label and input field for setting the timer delay
+            label_timer_delay = customtkinter.CTkLabel(master=self.settings_window,text="Set timer delay:")
+            label_timer_delay.grid(row=3, column=0, sticky=W, padx=10, pady=10)
 
-        # set input value to current timer delay
-        self.input_loop_delay.insert(0, str(self.config['loop_delay']))
+            self.input_loop_delay = customtkinter.CTkEntry(master=self.settings_window, width=100)
+            self.input_loop_delay.grid(row=3, column=1, sticky=W, padx=10, pady=10)
 
-        # label_action_altab = customtkinter.CTkLabel(master=self.settings_window, text="Gesture for alt-tab:")
-        # label_action_altab.grid(row=4, column=0, sticky=W, padx=10, pady=10)
-        # self.input_action_altab  = customtkinter.CTkEntry(master=self.settings_window, width=100)
-        # self.input_action_altab.grid(row=4, column=1, sticky=W, padx=10, pady=10)
-        #
-        # # set input value to current timer delay
-        # # find key with value 'openAltTab' in self.config['actions'] array
-        # key = list(filter(lambda x: self.config['actions'][x] == 'openAltTab', self.config['actions'].keys()))[0]
-        # self.input_action_altab.insert(0, key)
+            # set input value to current timer delay
+            self.input_loop_delay.insert(0, str(self.config['loop_delay']))
+
+            # label_action_altab = customtkinter.CTkLabel(master=self.settings_window, text="Gesture for alt-tab:")
+            # label_action_altab.grid(row=4, column=0, sticky=W, padx=10, pady=10)
+            # self.input_action_altab  = customtkinter.CTkEntry(master=self.settings_window, width=100)
+            # self.input_action_altab.grid(row=4, column=1, sticky=W, padx=10, pady=10)
+            #
+            # # set input value to current timer delay
+            # # find key with value 'openAltTab' in self.config['actions'] array
+            # key = list(filter(lambda x: self.config['actions'][x] == 'openAltTab', self.config['actions'].keys()))[0]
+            # self.input_action_altab.insert(0, key)
 
 
-        #gestures
-        # left hand on row 5
-        label = customtkinter.CTkLabel(master=self.settings_window, text="Gestures:")
-        label.grid(row=5, column=0, sticky=W, padx=5, pady=1)
-        label = customtkinter.CTkLabel(master=self.settings_window, text="Action:")
-        label.grid(row=6, column=0, sticky=W, padx=5, pady=1)
-        label = customtkinter.CTkLabel(master=self.settings_window, text="Left hand:")
-        label.grid(row=6, column=1, sticky=W, padx=5, pady=1)
-        label = customtkinter.CTkLabel(master=self.settings_window, text="Right hand:")
-        label.grid(row=6, column=2, sticky=W, padx=5, pady=1)
+            #gestures
+            # left hand on row 5
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Gestures:")
+            label.grid(row=5, column=0, sticky=W, padx=5, pady=1)
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Action:")
+            label.grid(row=6, column=0, sticky=W, padx=5, pady=1)
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Left hand:")
+            label.grid(row=6, column=1, sticky=W, padx=5, pady=1)
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Right hand:")
+            label.grid(row=6, column=2, sticky=W, padx=5, pady=1)
 
-        # actions
-        self.actionVar = tkinter.StringVar(app)
-        self.actionVar.set(list(self.config['actions'].values())[0])
-        self.actionVar.trace("w", lambda name, index, mode, actionVar=self.actionVar: self.action_changed(self.actionVar))
-        optionlist = list(self.config['actions'].values())
-        dropdown = tkinter.OptionMenu(self.settings_window, self.actionVar, *optionlist)
-        dropdown.grid(row=7, column=0, sticky=W, padx=5, pady=1)
-        #right hand
-        self.actionVarLeft = tkinter.StringVar(app)
-        self.actionVarLeft.set(self.mymain.get_action_labels()[0])
-        #self.actionVarLeft.trace("w", lambda name, index, mode, actionVar=self.actionVarLeft: self.action_changed(self.actionVarLeft))
-        optionlist = self.mymain.get_action_labels()
-        dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarLeft, *optionlist)
-        dropdown.grid(row=7, column=1, sticky=W, padx=5, pady=1)
-        #right hand
-        self.actionVarRight = tkinter.StringVar(app)
-        self.actionVarRight.set(self.mymain.get_action_labels()[0])
-        #self.actionVarRight.trace("w", lambda name, index, mode, actionVar=self.actionVarRight: self.action_changed(self.actionVarRight))
-        optionlist = self.mymain.get_action_labels()
-        dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarRight, *optionlist)
-        dropdown.grid(row=7, column=2, sticky=W, padx=5, pady=1)
+            # actions
+            self.actionVar = tkinter.StringVar(app)
+            self.actionVar.set(list(self.config['actions'].values())[0])
+            self.actionVar.trace("w", lambda name, index, mode, actionVar=self.actionVar: self.action_changed(self.actionVar))
+            optionlist = list(self.config['actions'].values())
+            dropdown = tkinter.OptionMenu(self.settings_window, self.actionVar, *optionlist)
+            dropdown.grid(row=7, column=0, sticky=W, padx=5, pady=1)
+            #right hand
+            self.actionVarLeft = tkinter.StringVar(app)
+            self.actionVarLeft.set(self.mymain.get_action_labels()[0])
+            #self.actionVarLeft.trace("w", lambda name, index, mode, actionVar=self.actionVarLeft: self.action_changed(self.actionVarLeft))
+            optionlist = self.mymain.get_action_labels()
+            dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarLeft, *optionlist)
+            dropdown.grid(row=7, column=1, sticky=W, padx=5, pady=1)
+            #right hand
+            self.actionVarRight = tkinter.StringVar(app)
+            self.actionVarRight.set(self.mymain.get_action_labels()[0])
+            #self.actionVarRight.trace("w", lambda name, index, mode, actionVar=self.actionVarRight: self.action_changed(self.actionVarRight))
+            optionlist = self.mymain.get_action_labels()
+            dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarRight, *optionlist)
+            dropdown.grid(row=7, column=2, sticky=W, padx=5, pady=1)
 
-        # ok button
-        button_ok = customtkinter.CTkButton(master=self.settings_window, text="Save",fg_color=("gray75", "gray30"),
-                                            command =lambda: self.save_settings_window(self.settings_window))
-        button_ok.grid(row=8, column=3, sticky=E, padx=30, pady=10)
-        # cancel button
-        button_cancel = customtkinter.CTkButton(master=self.settings_window, text="Cancel",fg_color=("gray75", "gray30"),
-                                                command =lambda: self.exit_settings_window(self.settings_window))
-        button_cancel.grid(row=8, column=2, sticky=E, padx=10, pady=10)
+            # ok button
+            button_ok = customtkinter.CTkButton(master=self.settings_window, text="Save",fg_color=("gray75", "gray30"),
+                                                command =lambda: self.save_settings_window(self.settings_window))
+            button_ok.grid(row=8, column=3, sticky=E, padx=30, pady=10)
+            # cancel button
+            button_cancel = customtkinter.CTkButton(master=self.settings_window, text="Cancel",fg_color=("gray75", "gray30"),
+                                                    command =lambda: self.exit_settings_window(self.settings_window))
+            button_cancel.grid(row=8, column=2, sticky=E, padx=10, pady=10)
+        else:
+            # show window
+            self.settings_window.deiconify()
 
     def help_function(self):
         #self.wm_state('iconic')
@@ -312,8 +317,10 @@ class App(customtkinter.CTk):
         self.exit_settings_window(window)
 
     def exit_settings_window(self, window):
-        window.destroy()
-        self.settings_window = None
+        # hide the window
+        window.withdraw()
+        #window.destroy()
+        #self.settings_window = None
 
     def save_config(self):
         with open(self.config_file, 'w') as outfile:
