@@ -15,4 +15,4 @@ jupyter >= 1.0.0
 jupyterlab >= 1.0.0
 customtkinter >= 1.0.0
 pynput >= 1.5.0
-"""
+
