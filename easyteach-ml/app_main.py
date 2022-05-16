@@ -245,8 +245,8 @@ class AppMain:
             key = str(self.actionMapping.convert_signs_to_array(self.recognizedSigns))
             # remove spaces from key
             key = key.replace(" ", "")
-            print("the key is: " + key)
-            print(self.config['actions'])
+            #print("the key is: " + key)
+            #print(self.config['actions'])
 
             # if self.config['actions'][key] is defined we recognize the gesture
             if key in self.config['actions']:
@@ -256,7 +256,7 @@ class AppMain:
                 self.tk.after(self.config['gesture_delay'], self.actionMapping.execute_action(self.config['actions'][key]))
 
             else:
-                print ("No action defined for this gesture")
+                #print ("No action defined for this gesture")
                 self.actionMapping.reset()
 
 

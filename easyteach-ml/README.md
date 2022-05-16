@@ -28,3 +28,7 @@
    2. py -m pip install --user virtualenv
    3. py -m venv env
    4. then for any command always make sure to execute: .\env\Scripts\activate
+   
+## links
+1. https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#installing-virtualenv
+2. 

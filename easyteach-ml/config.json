@@ -15,13 +15,12 @@
   },
   "actions": {
     "['PointUp','Open']": "upTab",
-    "['PointRight','Open']": "nextTab",
     "['PointLeft','Open']": "prevTab",
     "['PointDown','Open']": "downTab",
     "['PointUp','None']": "upArrow",
     "['PointDown','None']": "downArrow",
-    "['Close','Close']": "closeAltTab",
-    "['Open','Open']": "openAltTab"
+    "['Close','Close']": "openAltTab",
+    "['PointRight','None']": "nextTab"
   },
   "actionsDefault": {
     "['Open','Open']": "openAltTab",

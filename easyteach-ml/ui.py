@@ -8,6 +8,7 @@ import tkinter.messagebox
 import sys
 import numpy as np
 import keyboard_module as kbm
+from tkvideo import tkvideo
 
 #https://www.youtube.com/watch?v=UdCSiZR8xYY
 from app_main import AppMain
@@ -121,7 +122,23 @@ class App(customtkinter.CTk):
         # ============ frame_right ============
         self.lmain = Label(self.frame_right, bg = "black")
         self.lmain.grid(padx=20, pady=20)
-        # ============ frame_right -> frame_info ============
+
+        # splash screen that disappears after 5 seconds
+        # self.img = ImageTk.PhotoImage(file = "resources/bg-tech.png")
+        # self.logo = Label(self.frame_right, image=self.img , borderwidth = 0 , highlightthickness = 0)
+        # self.logo.image = self.img
+        # self.logo.grid(row=0, column=0, columnspan=2, rowspan=15, sticky="nswe")
+        # self.after(5000, self.logo.destroy)
+
+
+        # display a video window on top of main window
+        self.video_label = Label(self.frame_right, bg = "grey")
+        self.video_label.grid(row=0, column=0, columnspan=8, rowspan=15, sticky="nswe")
+        player = tkvideo("resources/splash.mp4", self.video_label, loop=1, size=(1100, 600))
+        player.play()
+        # destroy the label after the video is done playing
+        self.after(10000, self.video_label.destroy)
+
 
         # self.switch_2.select()
 
@@ -142,7 +159,8 @@ class App(customtkinter.CTk):
         self.video_stream() # starts a timer thread for video streaming
         # starts the mainloop as a thread with timer
         self.the_loop()
-        #self.the_loop_timer_id = self.after(self.config['loop_delay'], self.the_loop)
+        # start in stopped state - let the splash video play!
+        # self.stop_function() - UNDER DEVELOPMENT - not working yet
         self.mainloop()
 
 
@@ -179,10 +197,15 @@ class App(customtkinter.CTk):
 
             self.settings_window = customtkinter.CTkToplevel(self, name="settings")
             self.settings_window.resizable(width = True, height = True)
+            # add an image background
+            self.settings_window.img_background = ImageTk.PhotoImage(Image.open("resources/bg-tech.png"))
+            bg_label = Label(self.settings_window, image=self.settings_window.img_background)
+            bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+
             #self.settings_window.geometry("500x300")
             self.settings_window.title("Settings")
             self.settings_window.grid_columnconfigure(3, weight=1)
-            self.settings_window.grid_rowconfigure(7, weight=1)
+            self.settings_window.grid_rowconfigure(15, weight=1)
 
             #label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
 
@@ -227,7 +250,7 @@ class App(customtkinter.CTk):
 
             #gestures
             # left hand on row 5
-            label = customtkinter.CTkLabel(master=self.settings_window, text="Gestures:")
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Configure your gestures:")
             label.grid(row=5, column=0, sticky=W, padx=5, pady=1)
             label = customtkinter.CTkLabel(master=self.settings_window, text="Action:")
             label.grid(row=6, column=0, sticky=W, padx=5, pady=1)
@@ -258,18 +281,48 @@ class App(customtkinter.CTk):
             dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarRight, *optionlist)
             dropdown.grid(row=7, column=2, sticky=W, padx=5, pady=1)
 
+            # trigger initial action update
+            self.action_changed(self.actionVar)
+
+            # display a table of all gestures in config
+            self.display_gestures_config_table();
+
             # ok button
             button_ok = customtkinter.CTkButton(master=self.settings_window, text="Save",fg_color=("gray75", "gray30"),
                                                 command =lambda: self.save_settings_window(self.settings_window))
-            button_ok.grid(row=8, column=3, sticky=E, padx=30, pady=10)
+            button_ok.grid(row=15, column=3, sticky=E, padx=30, pady=10)
+
+            # display a table of config.actions
+
             # cancel button
             button_cancel = customtkinter.CTkButton(master=self.settings_window, text="Cancel",fg_color=("gray75", "gray30"),
                                                     command =lambda: self.exit_settings_window(self.settings_window))
-            button_cancel.grid(row=8, column=2, sticky=E, padx=10, pady=10)
+            button_cancel.grid(row=15, column=2, sticky=E, padx=10, pady=10)
         else:
             # show window
             self.settings_window.deiconify()
 
+    def display_gestures_config_table(self):
+        rows = []
+        i = 1
+        for key, value in self.config['actions'].items():
+            gestures = str(key).replace(" ", "").replace("[", "").replace("]", "").replace("'","").split(",")
+            cols = []
+            for j in range(3):
+                e = Entry(self.settings_window, width=10)
+                e.grid(row=7+i, column=j, sticky=NSEW, padx=5, pady=1)
+                if j == 0:
+                    e.insert(j, value)
+                elif j == 1:
+                    e.insert(j, gestures[0])
+                elif j == 2:
+                    e.insert(j, gestures[1])
+                e.config(state=DISABLED)
+                cols.append(e)
+            rows.append(cols)
+            i = i + 1
+
+        # display a table of config.actions
     def help_function(self):
         #self.wm_state('iconic')
         window = customtkinter.CTkToplevel(self)
@@ -398,7 +451,9 @@ class App(customtkinter.CTk):
                 gestures = str(key).replace(" ", "").replace("[", "").replace("]", "").replace("'","").split(",")
                 self.actionVarLeft.set(gestures[0])
                 self.actionVarRight.set(gestures[1])
+                #self.display_gestures_config_table()
                 break
+
 
 
 
