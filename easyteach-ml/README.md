@@ -3,7 +3,7 @@
 ##installing
 1. create a python virtual environment (venv)
 2. open terminal and execute: venv/Scripts/activate
-3. execute: pip install -f requirements.txt
+3. execute: pip install -r requirements.txt
 
 ## running
 1. open terminal and "venv/Scripts/activate"
@@ -16,8 +16,8 @@
    3. remember the index of the new gesture 
 2. line 3 of keypoint_classification.ipynb: put the index+1 (number of total gestures)
 3. open terminal and execute: venv/Scripts/activate
-4. execute: python app.main
-5. type "?" and the index of the new gesture (type continuous for at leasta minute to have 500-1500 images)
+4. execute: python app.py
+5. type "k" , then the index of the new gesture. Then type continuously the digit for at least a minute to have 500-1500 images.
 6. type ESC to exit the program
 
 ## how to create a venv manually

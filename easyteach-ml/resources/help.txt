@@ -1,0 +1,9 @@
+How to use gestures.io?
+
+On the left hand side you have buttons to control the gesture recognition.
+Start the gesture recognition by pressing the "Start" button.
+Stop the gesture recognition by pressing the "Stop" button.
+
+The settings button open a dialog to change the settings of the gesture system.
+
+

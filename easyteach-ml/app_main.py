@@ -30,7 +30,7 @@ class AppMain:
 
         self.run = True
         self.tk = tkUI
-        self.DELAY_TIME = 0.75
+        #self.DELAY_TIME = 0.75
         #self.cap = cv2.VideoCapture(0)
         #self.detector = htm.HandDetector(detectionCon=0.8, maxHands=2)
         self.altTabIsPress = False
@@ -253,7 +253,7 @@ class AppMain:
                 print (self.config['actions'][key])
                 # execute a timer to slow down actions
                 # set a timer to execute the action
-                self.tk.after(self.config['gesture_delay'], self.actionMapping.execute_action(self.config['actions'][key]))
+                self.tk.after(self.config['actions_delay'], self.actionMapping.execute_action(self.config['actions'][key]))
 
             else:
                 #print ("No action defined for this gesture")

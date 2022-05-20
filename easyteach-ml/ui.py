@@ -1,6 +1,8 @@
 import json
 from tkinter import *
 import tkinter
+
+import fontTools
 from PIL import ImageTk, Image
 import cv2
 import customtkinter
@@ -30,8 +32,12 @@ class App(customtkinter.CTk):
 
         self.mymain = AppMain(self, self.config)
         self.settings_window = None
+        # load images
+        self.button_img = PhotoImage(file ="resources/button.png")
+        self.help_img = PhotoImage(file="resources/header.png")
+        self.about_img = PhotoImage(file="resources/about.png")
 
-        self.title("EasyTeach")
+        self.title("Gestures.io")
         print("width: ", self.winfo_screenwidth())
         print(f"{self.config['window_width']}x{self.config['window_height']}")
 
@@ -85,38 +91,56 @@ class App(customtkinter.CTk):
         # #############################
 
         self.label_1 = customtkinter.CTkLabel(master=self.frame_left,
-                                              text="EasyTeach",
+                                              text="Gestures.io",
                                               text_font=("Roboto Medium", -25))  # font name and size in px
         self.label_1.grid(row=1, column=0, pady=10, padx=10)
 
-        self.button_start = customtkinter.CTkButton(master=self.frame_left,
-                                                text="Start",
-                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.start_function)
+        #self.img = self.img.subsample(2, 2)
+
+        self.button_start = Button(master=self.frame_left,
+                                   text="Start",
+                                   compound=tkinter.CENTER,
+                                   image = self.button_img,
+                                   borderwidth=0,
+                                   #fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                   command=self.start_function)
         self.button_start.grid(row=2, column=0, pady=10, padx=20)
 
-        self.button_stop = customtkinter.CTkButton(master=self.frame_left,
-                                                text="Stop",
-                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.stop_function)
+        self.button_stop = Button(master=self.frame_left,
+                                  text="Stop",
+                                  compound=tkinter.CENTER,
+                                  image = self.button_img,
+                                  borderwidth=0,
+                                  #fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                  command=self.stop_function)
         self.button_stop.grid(row=3, column=0, pady=10, padx=20)
 
-        self.button_settings = customtkinter.CTkButton(master=self.frame_left,
-                                                text="Settings",
-                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.settings_function)
+        self.button_settings = Button(master=self.frame_left,
+                                      text="Settings",
+                                      compound=tkinter.CENTER,
+                                      image = self.button_img,
+                                      borderwidth=0,
+                                      #fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                      command=self.settings_function)
         self.button_settings.grid(row=4, column=0, pady=10, padx=20)
 
-        self.button_help = customtkinter.CTkButton(master=self.frame_left,
-                                                text="Help",
-                                                fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                                command=self.help_function)
+        self.button_help = Button(master=self.frame_left,
+                                  text="Help",
+                                  compound=tkinter.CENTER,
+                                  image = self.button_img,
+                                  borderwidth=0,
+                                  #fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                  command=self.help_function)
         self.button_help.grid(row=5, column=0, pady=10, padx=20)
 
-        self.button_about = customtkinter.CTkButton(master=self.frame_left,
-                                        text="About",
-                                        fg_color=("gray75", "gray30"),  # <- custom tuple-color
-                                        command=self.about_function)
+        self.button_about = Button(master=self.frame_left,
+        #self.button_about = Button(master=self.frame_left,
+                                   text="About",
+                                   compound=tkinter.CENTER,
+                                   image = self.button_img,
+                                   borderwidth=0,
+                                   #fg_color=("gray75", "gray30"),  # <- custom tuple-color
+                                   command=self.about_function)
         self.button_about.grid(row=6, column=0, pady=10, padx=20)
 
         # ============ frame_right ============
@@ -197,10 +221,13 @@ class App(customtkinter.CTk):
 
             self.settings_window = customtkinter.CTkToplevel(self, name="settings")
             self.settings_window.resizable(width = True, height = True)
+            # attach self.exit_settings_window(window) to the window's close button
+            self.settings_window.protocol("WM_DELETE_WINDOW", self.exit_settings_window)
+
             # add an image background
-            self.settings_window.img_background = ImageTk.PhotoImage(Image.open("resources/bg-tech.png"))
-            bg_label = Label(self.settings_window, image=self.settings_window.img_background)
-            bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+            #self.settings_window.img_background = ImageTk.PhotoImage(Image.open("resources/bg-tech.png"))
+            #bg_label = Label(self.settings_window, image=self.settings_window.img_background)
+            #bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
             #self.settings_window.geometry("500x300")
             self.settings_window.title("Settings")
@@ -209,8 +236,7 @@ class App(customtkinter.CTk):
 
             #label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
 
-            label_radio_group = customtkinter.CTkLabel(master=self.settings_window,
-                                                            text="Select display mode:")
+            label_radio_group = Label(master=self.settings_window,text="Select display mode:", font=("Helvetica", 12))
             radio_button_0 = customtkinter.CTkRadioButton(master=self.settings_window,
                                                                variable=self.radio_var,
                                                                value=0,
@@ -223,41 +249,38 @@ class App(customtkinter.CTk):
             label_radio_group.grid(row=0, column=0, sticky=W, padx=10, pady=10)
             radio_button_0.grid(row=1, column=0, sticky=W, padx=10, pady=10)
             radio_button_1.grid(row=2, column=0, sticky=W, padx=10, pady=10)
-            #label_radio_group.pack(side=TOP, fill=X, padx=10, pady=10)
-            #radio_button_0.pack(side=TOP, fill=X, padx=10, pady=10)
-            #radio_button_1.pack(side=TOP, fill=X, padx=10, pady=10)
 
             # add label and input field for setting the timer delay
-            label_timer_delay = customtkinter.CTkLabel(master=self.settings_window,text="Set timer delay:")
+            label_timer_delay = Label(master=self.settings_window,text="Set main delay:", font=("Helvetica", 12), anchor=W)
             label_timer_delay.grid(row=3, column=0, sticky=W, padx=10, pady=10)
-
-            self.input_loop_delay = customtkinter.CTkEntry(master=self.settings_window, width=100)
+            self.input_loop_delay = Entry(master=self.settings_window, width=30)
             self.input_loop_delay.grid(row=3, column=1, sticky=W, padx=10, pady=10)
-
-            # set input value to current timer delay
             self.input_loop_delay.insert(0, str(self.config['loop_delay']))
 
-            # label_action_altab = customtkinter.CTkLabel(master=self.settings_window, text="Gesture for alt-tab:")
-            # label_action_altab.grid(row=4, column=0, sticky=W, padx=10, pady=10)
-            # self.input_action_altab  = customtkinter.CTkEntry(master=self.settings_window, width=100)
-            # self.input_action_altab.grid(row=4, column=1, sticky=W, padx=10, pady=10)
-            #
-            # # set input value to current timer delay
-            # # find key with value 'openAltTab' in self.config['actions'] array
-            # key = list(filter(lambda x: self.config['actions'][x] == 'openAltTab', self.config['actions'].keys()))[0]
-            # self.input_action_altab.insert(0, key)
+            # actions delay
+            label_actions_delay = Label(master=self.settings_window,text="Set actions delay:", font=("Helvetica", 12), anchor=W)
+            label_actions_delay.grid(row=4, column=0, sticky=W, padx=10, pady=10)
+            self.input_actions_delay = Entry(master=self.settings_window, width=30)
+            self.input_actions_delay.grid(row=4, column=1, sticky=W, padx=10, pady=10)
+            self.input_actions_delay.insert(0, str(self.config['actions_delay']))
 
+            # video delay
+            label_video_delay = Label(master=self.settings_window,text="Set video delay:", font=("Helvetica", 12), anchor=W)
+            label_video_delay.grid(row=5, column=0, sticky=W, padx=10, pady=10)
+            self.input_video_delay = Entry(master=self.settings_window, width=30)
+            self.input_video_delay.grid(row=5, column=1, sticky=W, padx=10, pady=10)
+            self.input_video_delay.insert(0, str(self.config['video_delay']))
 
             #gestures
-            # left hand on row 5
-            label = customtkinter.CTkLabel(master=self.settings_window, text="Configure your gestures:")
-            label.grid(row=5, column=0, sticky=W, padx=5, pady=1)
-            label = customtkinter.CTkLabel(master=self.settings_window, text="Action:")
-            label.grid(row=6, column=0, sticky=W, padx=5, pady=1)
-            label = customtkinter.CTkLabel(master=self.settings_window, text="Left hand:")
-            label.grid(row=6, column=1, sticky=W, padx=5, pady=1)
-            label = customtkinter.CTkLabel(master=self.settings_window, text="Right hand:")
-            label.grid(row=6, column=2, sticky=W, padx=5, pady=1)
+            #label = customtkinter.CTkLabel(master=self.settings_window, text="Configure your gestures:")
+            label = Label(master=self.settings_window, text="Configure your gestures:", font=("Helvetica", 14))
+            label.grid(row=6, column=0, sticky=W, padx=0, pady=1)
+            label = Label(master=self.settings_window, text="Action:", anchor=W, font=("Helvetica", 12))
+            label.grid(row=7, column=0, sticky=W, padx=0, pady=1)
+            label = Label(master=self.settings_window, text="Left hand:", anchor=W, font=("Helvetica", 12))
+            label.grid(row=7, column=1, sticky=W, padx=0, pady=1)
+            label = Label(master=self.settings_window, text="Right hand:", anchor=W, font=("Helvetica", 12))
+            label.grid(row=7, column=2, sticky=W, padx=0, pady=1)
 
             # actions
             self.actionVar = tkinter.StringVar(app)
@@ -265,44 +288,50 @@ class App(customtkinter.CTk):
             self.actionVar.trace("w", lambda name, index, mode, actionVar=self.actionVar: self.action_changed(self.actionVar))
             optionlist = list(self.config['actions'].values())
             dropdown = tkinter.OptionMenu(self.settings_window, self.actionVar, *optionlist)
-            dropdown.grid(row=7, column=0, sticky=W, padx=5, pady=1)
+            dropdown.grid(row=8, column=0, sticky=W, padx=5, pady=1)
             #right hand
             self.actionVarLeft = tkinter.StringVar(app)
             self.actionVarLeft.set(self.mymain.get_action_labels()[0])
             #self.actionVarLeft.trace("w", lambda name, index, mode, actionVar=self.actionVarLeft: self.action_changed(self.actionVarLeft))
             optionlist = self.mymain.get_action_labels()
             dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarLeft, *optionlist)
-            dropdown.grid(row=7, column=1, sticky=W, padx=5, pady=1)
+            dropdown.grid(row=8, column=1, sticky=W, padx=5, pady=1)
             #right hand
             self.actionVarRight = tkinter.StringVar(app)
             self.actionVarRight.set(self.mymain.get_action_labels()[0])
             #self.actionVarRight.trace("w", lambda name, index, mode, actionVar=self.actionVarRight: self.action_changed(self.actionVarRight))
             optionlist = self.mymain.get_action_labels()
             dropdown = tkinter.OptionMenu(self.settings_window, self.actionVarRight, *optionlist)
-            dropdown.grid(row=7, column=2, sticky=W, padx=5, pady=1)
+            dropdown.grid(row=8, column=2, sticky=W, padx=5, pady=1)
 
             # trigger initial action update
             self.action_changed(self.actionVar)
 
             # display a table of all gestures in config
-            self.display_gestures_config_table();
+            self.display_gestures_config_table(fromrow=9)
 
             # ok button
-            button_ok = customtkinter.CTkButton(master=self.settings_window, text="Save",fg_color=("gray75", "gray30"),
-                                                command =lambda: self.save_settings_window(self.settings_window))
-            button_ok.grid(row=15, column=3, sticky=E, padx=30, pady=10)
+            button_ok = Button(master=self.settings_window, text="Save",
+                               compound=tkinter.CENTER,
+                               image = self.button_img,
+                               borderwidth=0,
+                               command =lambda: self.save_settings_window(self.settings_window))
+            button_ok.grid(row=17, column=3, sticky=E, padx=30, pady=10)
 
             # display a table of config.actions
 
             # cancel button
-            button_cancel = customtkinter.CTkButton(master=self.settings_window, text="Cancel",fg_color=("gray75", "gray30"),
-                                                    command =lambda: self.exit_settings_window(self.settings_window))
-            button_cancel.grid(row=15, column=2, sticky=E, padx=10, pady=10)
+            button_cancel = Button(master=self.settings_window, text="Cancel",
+                                   compound=tkinter.CENTER,
+                                   image = self.button_img,
+                                   borderwidth=0,
+                                    command =lambda: self.exit_settings_window())
+            button_cancel.grid(row=17, column=2, sticky=E, padx=10, pady=10)
         else:
             # show window
             self.settings_window.deiconify()
 
-    def display_gestures_config_table(self):
+    def display_gestures_config_table(self, fromrow=0):
         rows = []
         i = 1
         for key, value in self.config['actions'].items():
@@ -310,7 +339,7 @@ class App(customtkinter.CTk):
             cols = []
             for j in range(3):
                 e = Entry(self.settings_window, width=10)
-                e.grid(row=7+i, column=j, sticky=NSEW, padx=5, pady=1)
+                e.grid(row=fromrow+i, column=j, sticky=NSEW, padx=5, pady=1)
                 if j == 0:
                     e.insert(j, value)
                 elif j == 1:
@@ -324,34 +353,58 @@ class App(customtkinter.CTk):
 
         # display a table of config.actions
     def help_function(self):
-        #self.wm_state('iconic')
-        window = customtkinter.CTkToplevel(self)
-        window.geometry("500x500")
-        window.title("Help")
-        label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
-        b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command =lambda: self.exit_top_window(window))
-        b.pack(padx=20, pady=20)
+        self.stop_function()
+        self.help_window = customtkinter.CTkToplevel(self)
+        self.help_window.title("Help")
+        label = Label(self.help_window, image=self.help_img, bg="black", bd=0)
+
+        label.pack(expand=YES, fill=BOTH)
+
+        # load the text file resources/help.txt and display the text on top of the label with a scrollbar
+        with open("resources/help.txt", "r") as f:
+            text = f.read()
+        text_widget = Text(self.help_window, height=20, width=60, bg="white", fg="black", bd=0)
+        #
+        text_widget.insert(END, text)
+        # set font
+        text_widget.config(font=("Helvetica", 12))
+        text_widget.config(state=DISABLED)
+        text_widget.pack(expand=YES, fill=BOTH)
+
+        scrollbar = Scrollbar(self.help_window, orient=VERTICAL, command=text_widget.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        text_widget.config(yscrollcommand=scrollbar.set)
+
+        b = Button(master=self.help_window, text="Close",
+                   compound=tkinter.CENTER,
+                   image=self.button_img,
+                   command =lambda: self.exit_and_destroy_window(self.help_window))
+        b.pack(side="bottom", fill="both", expand=True)
 
 
     def about_function(self):
-        #self.wm_state('iconic')
-        window = customtkinter.CTkToplevel(self)
-        window.geometry("500x500")
-        window.title("About")
-        label = customtkinter.CTkLabel(window, text="BLABLABLABLABLA")
-        label.pack(side="top", fill="both", expand=True, padx=40, pady=40)
-        b = customtkinter.CTkButton(master=window, text="Okay",fg_color=("gray75", "gray30"), command = lambda: self.exit_top_window(window))
-        b.pack(padx=20, pady=20)
+        self.stop_function()
+        self.about_window = customtkinter.CTkToplevel(self)
+        self.about_window.title("About")
+        label = Label(self.about_window, image=self.about_img, bg="black", bd=0)
+
+        label.pack(expand=YES, fill=BOTH)
+        b = Button(master=self.about_window, text="Close",
+                   compound=tkinter.CENTER,
+                   image=self.button_img,
+                   command =lambda: self.exit_and_destroy_window(self.about_window))
+        b.pack(side="bottom", fill="both", expand=True)
 
 
-    def exit_top_window(self, window):
+    def exit_and_destroy_window(self, window):
         window.destroy()
         self.update_display_mode()
 
     def save_settings_window(self, window):
         # save settings
         self.config['loop_delay'] = self.input_loop_delay.get()
+        self.config['video_delay'] = self.input_video_delay.get()
+        self.config['actions_delay'] = self.input_actions_delay.get()
 
         # update gesture
         # first remove gesture already defined
@@ -367,13 +420,12 @@ class App(customtkinter.CTk):
         self.update_display_mode()
         self.save_config()
 
-        self.exit_settings_window(window)
+        self.exit_settings_window()
 
-    def exit_settings_window(self, window):
+    def exit_settings_window(self):
         # hide the window
-        window.withdraw()
-        #window.destroy()
-        #self.settings_window = None
+        self.settings_window.withdraw()
+
 
     def save_config(self):
         with open(self.config_file, 'w') as outfile:
