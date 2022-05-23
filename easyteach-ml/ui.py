@@ -68,8 +68,8 @@ class App(customtkinter.CTk):
         # ============ create two frames ============
 
         # configure grid layout (1x2)
-        self.grid_columnconfigure(1, weight=1)
-        self.rowconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1) # make the right column stretchable
+        self.rowconfigure(0, weight=1) # make the top row stretchable
 
         self.frame_left = customtkinter.CTkFrame(master=self,
                                                  width=180,
@@ -146,16 +146,17 @@ class App(customtkinter.CTk):
 
 
         # ============ frame_right ============
-        self.lmain = Label(self.frame_right, bg = "black")  # background color
-        self.lmain.grid(padx=20, pady=20)
+        self.videoFrameLabel = Label(self.frame_right, bg ="black")  # background color
+        self.videoFrameLabel.grid(row=0, column=0, sticky=N + S + E + W)
+        #self.lmain.grid(padx=20, pady=20)
 
         # display a video window on top of main window
-        self.video_label = Label(self.frame_right, bg = "grey")
-        self.video_label.grid(row=0, column=0, columnspan=8, rowspan=15, sticky="nswe")
-        player = tkvideo("resources/splash.mp4", self.video_label, loop=1, size=(1100, 600))
+        self.splashLabel = Label(self.frame_right, bg ="grey")
+        self.splashLabel.grid(row=0, column=0, columnspan=8, rowspan=15, sticky="nswe")
+        player = tkvideo("resources/splash.mp4", self.splashLabel, loop=1, size=(1100, 600))
         player.play()
         # destroy the label after the video is done playing
-        self.after(10000, self.video_label.destroy) # destroy after 10 seconds
+        self.after(10000, self.splashLabel.destroy) # destroy after 10 seconds
 
     def update_display_mode(self):
         """
@@ -488,12 +489,17 @@ class App(customtkinter.CTk):
 
         # if frame is None system is not running yet
         if self.mymain.get_frame() is None:
-            self.lmain.after(self.config['video_delay'], self.video_stream) # wait and try again
+            self.videoFrameLabel.after(self.config['video_delay'], self.video_stream) # wait and try again
             return
 
         frame = self.mymain.get_frame()
 
+
         #set the size of the image to be displayed in the window in percent of the window size (0.0 - 1.0)
+        # frame = cv2.resize(frame, (self.config["window_width"] - self.frame_left.winfo_width() ,
+        #                            self.config["window_height"] ),
+        #                    interpolation = cv2.INTER_AREA)
+
         frame = cv2.resize(frame, (self.config["window_width"] - 180 -20 - 20 -20 -2 ,
                                    self.config["window_height"] - 20 - 20 - 20 - 20),
                                    interpolation = cv2.INTER_AREA)
@@ -515,11 +521,11 @@ class App(customtkinter.CTk):
         img = Image.fromarray(cv2image)
         imgtk = ImageTk.PhotoImage(image=img)
 
-        self.lmain.imgtk = imgtk
-        self.lmain.configure(image=imgtk) # display the image
+        self.videoFrameLabel.imgtk = imgtk
+        self.videoFrameLabel.configure(image=imgtk) # display the image
 
         # restart the timer to call the video stream
-        self.lmain.after(self.config['video_delay'], self.video_stream)
+        self.videoFrameLabel.after(self.config['video_delay'], self.video_stream)
 
     def action_changed(self, actionVar):
         """
