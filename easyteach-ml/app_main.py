@@ -17,26 +17,31 @@ from utils import CvFpsCalc
 from model import KeyPointClassifier
 from model import PointHistoryClassifier
 
-# const for sign ids
-SIGN_ID_OPEN_HAND = 0
-SIGN_ID_FIST = 1
-SIGN_ID_POINT_UP = 2
-SIGN_ID_POINT_DOWN = 3
-SIGN_ID_POINT_LEFT = 4
-SIGN_ID_POINT_RIGHT = 5
 
 class AppMain:
-    def __init__(self, tkUI, config):
+    def __init__(self, tkUI):
 
         self.run = True
         self.tk = tkUI
-        #self.DELAY_TIME = 0.75
-        #self.cap = cv2.VideoCapture(0)
-        #self.detector = htm.HandDetector(detectionCon=0.8, maxHands=2)
         self.altTabIsPress = False
 
-        # load config.json
-        self.config = config
+        # keystrokes for changing mode - k to add new hand, s to stop, h to add finger points
+        self.mode = -1
+        self.tk.bind("k", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("n", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("h", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("0", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("1", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("2", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("3", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("4", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("5", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("6", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("7", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("8", lambda event: self.handle_key_event(event.char))
+        self.tk.bind("9", lambda event: self.handle_key_event(event.char))
+
+        self.is_teaching = False
 
         # init params from config
         self.get_args()
@@ -55,30 +60,7 @@ class AppMain:
             min_tracking_confidence=self.min_tracking_confidence,
         )
 
-        self.keypoint_classifier = KeyPointClassifier()
-
-        self.point_history_classifier = PointHistoryClassifier()
-
-        # Read labels ###########################################################
-        with open('model/keypoint_classifier/keypoint_classifier_label.csv',
-                  encoding='utf-8-sig') as f:
-            self.keypoint_classifier_labels = csv.reader(f)
-            self.keypoint_classifier_labels = [
-                row[0] for row in self.keypoint_classifier_labels
-            ]
-        with open(
-                'model/point_history_classifier/point_history_classifier_label.csv',
-                encoding='utf-8-sig') as f:
-            self.point_history_classifier_labels = csv.reader(f)
-            self.point_history_classifier_labels = [
-                row[0] for row in self.point_history_classifier_labels
-            ]
-        # FPS Measurement ########################################################
-        self.cvFpsCalc = CvFpsCalc(buffer_len=10)
-
-        # Action Mapping ########################################################
-        self.actionMapping = ActionMapping(self.keypoint_classifier_labels)
-
+        self.init_tensorflow()
 
         # Coordinate history #################################################################
         self.history_length = 16
@@ -90,54 +72,90 @@ class AppMain:
         self.mode = 0
         self.debug_image = None
 
+    def init_tensorflow(self):
+        """
+        Initialize tensorflow model - needed each time we teach a new gesture
+        :return:
+        """
+        self.is_teaching = False
+        # recreate classifier
+        self.keypoint_classifier = KeyPointClassifier(num_threads = self.tk.config["classifier"]["num_threads"])
+        self.point_history_classifier = PointHistoryClassifier()
+
+        # Read labels ###########################################################
+        with open('model/keypoint_classifier/keypoint_classifier_label.csv',
+                  encoding='utf-8-sig') as f:
+            self.keypoint_classifier_labels = csv.reader(f)
+            self.keypoint_classifier_labels = [
+                row[0] for row in self.keypoint_classifier_labels
+            ]
+            f.close()
+
+        self.number_of_gestures = len(self.keypoint_classifier_labels)
+        self.new_gesture_index = -1
+
+        with open(
+                'model/point_history_classifier/point_history_classifier_label.csv',
+                encoding='utf-8-sig') as f:
+            self.point_history_classifier_labels = csv.reader(f)
+            self.point_history_classifier_labels = [
+                row[0] for row in self.point_history_classifier_labels
+            ]
+            f.close()
+
+        # FPS Measurement ########################################################
+        self.cvFpsCalc = CvFpsCalc(buffer_len=10)
+
+        # Action Mapping ########################################################
+        self.actionMapping = ActionMapping(self.keypoint_classifier_labels)
+
+
     def get_args(self):
-        # parse arguments
-        # parser = argparse.ArgumentParser()
-
-        # parser.add_argument("--device", type=int, default=0)
-        # parser.add_argument("--width", help='cap width', type=int, default=960)
-        # parser.add_argument("--height", help='cap height', type=int, default=540)
-        #
-        # parser.add_argument('--use_static_image_mode', action='store_true')
-        # parser.add_argument("--min_detection_confidence",
-        #                     help='min_detection_confidence',
-        #                     type=float,
-        #                     default=0.7)
-        # parser.add_argument("--min_tracking_confidence",
-        #                     help='min_tracking_confidence',
-        #                     type=int,
-        #                     default=0.5)
-        #
-        # args = parser.parse_args()
-
-        # self.cap_device = args.device
-        # self.cap_width = args.width
-        # self.cap_height = args.height
-        #
-        # self.use_static_image_mode = args.use_static_image_mode
-        # self.min_detection_confidence = args.min_detection_confidence
-        # self.min_tracking_confidence = args.min_tracking_confidence
-
         self.cap_device = 0
-        self.cap_width = self.config["classifier"]["width"]
-        self.cap_height = self.config["classifier"]["height"]
+        self.cap_width = self.tk.config["classifier"]["width"]
+        self.cap_height = self.tk.config["classifier"]["height"]
 
-        self.use_static_image_mode = self.config["classifier"]["use_static_image_mode"] == "True"
-        self.min_detection_confidence = self.config["classifier"]["min_detection_confidence"]
-        self.min_tracking_confidence = self.config["classifier"]["min_tracking_confidence"]
+        self.use_static_image_mode = self.tk.config["classifier"]["use_static_image_mode"] == "True"
+        self.min_detection_confidence = self.tk.config["classifier"]["min_detection_confidence"]
+        self.min_tracking_confidence = self.tk.config["classifier"]["min_tracking_confidence"]
         self.use_brect = True
 
-    def select_mode(self, key):
-        number = -1
-        if 48 <= key <= 57:  # 0 ~ 9
-            number = key - 48
-        if key == 110:  # n
-            self.mode = 0
-        if key == 107:  # k
+    def handle_key_event(self, key):
+        self.new_gesture_index = -1
+        if key == 'k':
             self.mode = 1
-        if key == 104:  # h
+            # append "gesture" + self.number_of_gestures to the file keypoint_classifier_label.csv
+            self.keypoint_classifier_labels.append("gesture" + str(self.number_of_gestures))
+            # open the file keypoint_classifier_label.csv and apend the new label at last line
+            with open('model/keypoint_classifier/keypoint_classifier_label.csv', 'a', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(["gesture" + str(self.number_of_gestures)])
+            f.close()
+
+        elif key == 's':
+            self.mode = 0
+        elif key == 'h':
             self.mode = 2
-        return number
+        # is it a digit
+        elif key.isdigit():
+            self.new_gesture_index = self.number_of_gestures
+            self.is_teaching = True
+        else:
+            self.mode = -1
+
+    # def select_mode(self, key):
+    #     number = -1
+    #     print("key:", key)
+    #     if 48 <= key <= 57:  # 0 ~ 9
+    #         number = key - 48
+    #     if key == 110:  # n
+    #         self.mode = 0
+    #     if key == 107:  # k - teaching mode
+    #         self.mode = 1
+    #     if key == 104:  # h
+    #         self.mode = 2
+    #     self.mode = number
+    #     return number
 
     def get_video(self):
         return self.cap
@@ -162,11 +180,9 @@ class AppMain:
 
         fps = self.cvFpsCalc.get()
 
-        # Process Key (ESC: end) #################################################
-        key = cv.waitKey(10)
-        #if key == 27:  # ESC
-        #    break
-        number = self.select_mode(key)
+        #key = cv.waitKey(10)
+        #number = self.select_mode(key)
+        number = self.mode
 
         # Camera capture #####################################################
         ret, image = self.cap.read()
@@ -197,15 +213,12 @@ class AppMain:
                 landmark_list = calc_landmark_list(self.debug_image, hand_landmarks)
 
                 # Conversion to relative coordinates / normalized coordinates
-                pre_processed_landmark_list = pre_process_landmark(
-                    landmark_list)
-                pre_processed_point_history_list = pre_process_point_history(
-                    self.debug_image, self.point_history)
+                pre_processed_landmark_list = pre_process_landmark(landmark_list)
+                pre_processed_point_history_list = pre_process_point_history(self.debug_image, self.point_history)
                 # Write to the dataset file
-                logging_csv(number, self.mode, pre_processed_landmark_list,
-                            pre_processed_point_history_list)
+                logging_csv(self.new_gesture_index, self.mode, pre_processed_landmark_list, pre_processed_point_history_list)
 
-                # Hand sign classification
+                # Tensorflow Hand sign classification
                 hand_sign_id = self.keypoint_classifier(pre_processed_landmark_list)
                 if hand_sign_id == 2:  # Point gesture
                     self.point_history.append(landmark_list[8])
@@ -249,11 +262,11 @@ class AppMain:
             #print(self.config['actions'])
 
             # if self.config['actions'][key] is defined we recognize the gesture
-            if key in self.config['actions']:
-                print (self.config['actions'][key])
+            if key in self.tk.config['actions']:
+                print (self.tk.config['actions'][key])
                 # execute a timer to slow down actions
                 # set a timer to execute the action
-                self.tk.after(self.config['actions_delay'], self.actionMapping.execute_action(self.config['actions'][key]))
+                self.tk.after(self.tk.config['actions_delay'], self.actionMapping.execute_action(self.tk.config['actions'][key]))
 
             else:
                 #print ("No action defined for this gesture")
@@ -264,7 +277,7 @@ class AppMain:
             self.point_history.append([0, 0])
 
         self.debug_image = draw_point_history(self.debug_image, self.point_history)
-        self.debug_image = draw_info(self.debug_image, fps, self.mode, number)
+        self.debug_image = draw_info(self.debug_image, fps, self.mode, self.new_gesture_index)
         # Screen reflection #############################################################
         #cv.imshow('Hand Gesture Recognition', self. debug_image)
 
@@ -366,14 +379,20 @@ def logging_csv(number, mode, landmark_list, point_history_list):
         pass
     if mode == 1 and (0 <= number <= 9):
         csv_path = 'model/keypoint_classifier/keypoint.csv'
-        with open(csv_path, 'a', newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow([number, *landmark_list])
+        if number > 0:
+            with open(csv_path, 'a', newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow([number, *landmark_list])
+            f.close()
+
     if mode == 2 and (0 <= number <= 9):
         csv_path = 'model/point_history_classifier/point_history.csv'
-        with open(csv_path, 'a', newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow([number, *point_history_list])
+        if number > 0:
+            with open(csv_path, 'a', newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow([number, *point_history_list])
+            f.close()
+
     return
 
 def draw_landmarks(image, landmark_point):
