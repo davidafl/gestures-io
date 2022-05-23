@@ -337,6 +337,7 @@ class App(customtkinter.CTk):
             button_cancel.grid(row=nextrow+1, column=2, sticky=E, padx=10, pady=10)
         else:
             # show window
+            self.display_gestures_config_table(fromrow=9)
             self.settings_window.deiconify()
 
     def display_gestures_config_table(self, fromrow=0):

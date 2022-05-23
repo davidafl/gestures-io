@@ -33,6 +33,11 @@ def pressLeftArrow():
     keyboard.release(Key.left)
     print("left---")
 
+def pressSpace():
+    keyboard.press(Key.space)
+    keyboard.release(Key.space)
+    print("space---")
+
 def pressRightArrow():
     keyboard.press(Key.right)
     keyboard.release(Key.right)

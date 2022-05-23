@@ -42,6 +42,7 @@ class AppMain:
         self.tk.bind("9", lambda event: self.handle_key_event(event.char))
 
         self.is_teaching = False
+        self.currentAction = None
 
         # init params from config
         self.get_args()
@@ -50,6 +51,7 @@ class AppMain:
         self.cap = cv.VideoCapture(self.cap_device, cv.CAP_DSHOW) # cv.CAP_DSHOW for windows 10 # cv.CAP_ANY for mac os x # cv.CAP_V4L for linux # cv.CAP_GSTREAMER for linux # cv.CAP_FIREWIRE for linux
         self.cap.set(cv.CAP_PROP_FRAME_WIDTH, self.cap_width)
         self.cap.set(cv.CAP_PROP_FRAME_HEIGHT, self.cap_height)
+        #self.cap.set(cv.CAP_PROP_FPS, 60)  # newly added code
 
         # Model load #############################################################
         mp_hands = mp.solutions.hands
@@ -111,7 +113,7 @@ class AppMain:
 
 
     def get_args(self):
-        self.cap_device = 0
+        self.cap_device = self.tk.config["cap_device"]
         self.cap_width = self.tk.config["classifier"]["width"]
         self.cap_height = self.tk.config["classifier"]["height"]
 
@@ -266,7 +268,10 @@ class AppMain:
                 print (self.tk.config['actions'][key])
                 # execute a timer to slow down actions
                 # set a timer to execute the action
-                self.tk.after(self.tk.config['actions_delay'], self.actionMapping.execute_action(self.tk.config['actions'][key]))
+                if self.currentAction is not None:
+                    self.after_cancel(self.currentAction)
+                self.currentAction = self.tk.after(self.tk.config['actions_delay'], self.actionMapping.execute_action(self.tk.config['actions'][key]))
+
 
             else:
                 #print ("No action defined for this gesture")

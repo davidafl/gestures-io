@@ -62,5 +62,8 @@ class ActionMapping:
         if(action == "upArrow"):
             kbm.pressUpArrow()
 
+        if (action == "space"):
+            kbm.pressSpace()
+
 
 
