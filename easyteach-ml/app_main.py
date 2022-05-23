@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 import csv
 import copy
-import argparse
 import itertools
-import json
 from collections import Counter
 from collections import deque
 
@@ -19,8 +17,14 @@ from model import PointHistoryClassifier
 
 
 class AppMain:
+    """
+    Main class for the application.
+    """
     def __init__(self, tkUI):
-
+        """
+        Constructor
+        :param tkUI: the tkinter UI instance
+        """
         self.run = True
         self.tk = tkUI
         self.altTabIsPress = False
@@ -51,15 +55,15 @@ class AppMain:
         self.cap = cv.VideoCapture(self.cap_device, cv.CAP_DSHOW) # cv.CAP_DSHOW for windows 10 # cv.CAP_ANY for mac os x # cv.CAP_V4L for linux # cv.CAP_GSTREAMER for linux # cv.CAP_FIREWIRE for linux
         self.cap.set(cv.CAP_PROP_FRAME_WIDTH, self.cap_width)
         self.cap.set(cv.CAP_PROP_FRAME_HEIGHT, self.cap_height)
-        #self.cap.set(cv.CAP_PROP_FPS, 60)  # newly added code
 
-        # Model load #############################################################
+        # Mediapipe Hand Model load #############################################################
         mp_hands = mp.solutions.hands
+        # store the model in a member variable
         self.hands = mp_hands.Hands(
             static_image_mode=self.use_static_image_mode,
             max_num_hands=2,
-            min_detection_confidence=self.min_detection_confidence,
-            min_tracking_confidence=self.min_tracking_confidence,
+            min_detection_confidence=self.min_detection_confidence, # param in json file
+            min_tracking_confidence=self.min_tracking_confidence, # param in json file
         )
 
         self.init_tensorflow()
@@ -80,7 +84,7 @@ class AppMain:
         :return:
         """
         self.is_teaching = False
-        # recreate classifier
+        # create classifier
         self.keypoint_classifier = KeyPointClassifier(num_threads = self.tk.config["classifier"]["num_threads"])
         self.point_history_classifier = PointHistoryClassifier()
 
@@ -113,6 +117,10 @@ class AppMain:
 
 
     def get_args(self):
+        """
+        Get arguments from config file
+        :return:
+        """
         self.cap_device = self.tk.config["cap_device"]
         self.cap_width = self.tk.config["classifier"]["width"]
         self.cap_height = self.tk.config["classifier"]["height"]
@@ -123,6 +131,11 @@ class AppMain:
         self.use_brect = True
 
     def handle_key_event(self, key):
+        """
+        Handle key event, k to start teaching gesture, s to stop, 0 to record a gesture
+        :param key:
+        :return:
+        """
         self.new_gesture_index = -1
         if key == 'k':
             self.mode = 1
@@ -178,12 +191,13 @@ class AppMain:
         return self.keypoint_classifier_labels
 
     def run_video(self):
-        # ("run_video")
+        """
+        capture video from camera and process the image with mediapipe, then
+        run the classifier to get the action label
+        :return:
+        """
 
         fps = self.cvFpsCalc.get()
-
-        #key = cv.waitKey(10)
-        #number = self.select_mode(key)
         number = self.mode
 
         # Camera capture #####################################################
@@ -192,10 +206,10 @@ class AppMain:
             return
 
         image = cv.flip(image, 1)  # Mirror display
-        self.debug_image = copy.deepcopy(image)
+        self.debug_image = copy.deepcopy(image) # copy the image for debug
 
         # Detection implementation #############################################################
-        image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+        image = cv.cvtColor(image, cv.COLOR_BGR2RGB) # Convert to RGB
 
         image.flags.writeable = False
         results = self.hands.process(image)
@@ -203,25 +217,26 @@ class AppMain:
         self.recognizedSigns = []
 
         #  ####################### GEST recognition ############################
-        if results.multi_hand_landmarks is not None:
-            # print('multi_hand_landmarks')
+        if results.multi_hand_landmarks is not None: # if mediapipe detect hands
             # loop over all hands
-            signIds = []
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
                 # Bounding box calculation
                 brect = calc_bounding_rect(self.debug_image, hand_landmarks)
-                # Landmark calculation
+                # 1 - Mediapipe Landmark calculation
                 landmark_list = calc_landmark_list(self.debug_image, hand_landmarks)
 
-                # Conversion to relative coordinates / normalized coordinates
+                # 2 - Mediapipe Conversion to relative coordinates / normalized coordinates
                 pre_processed_landmark_list = pre_process_landmark(landmark_list)
                 pre_processed_point_history_list = pre_process_point_history(self.debug_image, self.point_history)
-                # Write to the dataset file
+
+                # Write to the dataset file (of we are recording a new gesture)
                 logging_csv(self.new_gesture_index, self.mode, pre_processed_landmark_list, pre_processed_point_history_list)
 
-                # Tensorflow Hand sign classification
-                hand_sign_id = self.keypoint_classifier(pre_processed_landmark_list)
+                ############### 3 = TENSORFLOW Hand sign classification
+                hand_sign_id = self.keypoint_classifier(pre_processed_landmark_list) # execute tensorflow model
+
+                # 4 - process the hand sign id
                 if hand_sign_id == 2:  # Point gesture
                     self.point_history.append(landmark_list[8])
                 else:
@@ -231,13 +246,11 @@ class AppMain:
                 finger_gesture_id = 0
                 point_history_len = len(pre_processed_point_history_list)
                 if point_history_len == (self.history_length * 2):
-                    finger_gesture_id = self.point_history_classifier(
-                        pre_processed_point_history_list)
+                    finger_gesture_id = self.point_history_classifier(pre_processed_point_history_list)
 
                 # Calculates the gesture IDs in the latest detection
                 self.finger_gesture_history.append(finger_gesture_id)
-                most_common_fg_id = Counter(
-                    self.finger_gesture_history).most_common()
+                most_common_fg_id = Counter(self.finger_gesture_history).most_common()
 
                 # Drawing part
                 self.debug_image = draw_bounding_rect(self.use_brect, self.debug_image, brect)
@@ -256,12 +269,10 @@ class AppMain:
 
                 # if size of signIds is 2 then gesture using both hands is detected
 
-            ############### EasyTeach: convert gestures to action ###################
+            ############### convert gestures to action ###################
             key = str(self.actionMapping.convert_signs_to_array(self.recognizedSigns))
             # remove spaces from key
-            key = key.replace(" ", "")
-            #print("the key is: " + key)
-            #print(self.config['actions'])
+            key = key.replace(" ", "") # remove spaces from key
 
             # if self.config['actions'][key] is defined we recognize the gesture
             if key in self.tk.config['actions']:
@@ -279,12 +290,10 @@ class AppMain:
 
 
         else:
-            self.point_history.append([0, 0])
+            self.point_history.append([0, 0]) # if no hand is detected, add a zero to the point history
 
         self.debug_image = draw_point_history(self.debug_image, self.point_history)
         self.debug_image = draw_info(self.debug_image, fps, self.mode, self.new_gesture_index)
-        # Screen reflection #############################################################
-        #cv.imshow('Hand Gesture Recognition', self. debug_image)
 
 
 if __name__ == "__AppMain__":

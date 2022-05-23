@@ -18,6 +18,11 @@ class ActionMapping:
 
 
     def convert_signs_to_array(self, signs):
+        """
+        builds an array of left and right hands signs
+        :param signs: an array of signs
+        :return: an array of hands
+        """
         hands = []
         #loop over self.recognizedSigns and add the sign id to hands
         for sign in signs:
