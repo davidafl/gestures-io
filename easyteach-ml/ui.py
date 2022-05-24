@@ -95,52 +95,51 @@ class App(customtkinter.CTk):
 
         #self.img = self.img.subsample(2, 2) # scale image to 50%
 
-        self.button_start = Button(master=self.frame_left,
+        self.button_start = customtkinter.CTkButton(master=self.frame_left,
                                    text="Start",
-                                   compound=tkinter.CENTER,
-                                   image = self.button_img,
-                                   borderwidth=0,
+                                   #compound=tkinter.CENTER,
+                                   #image = self.button_img,
+                                   #borderwidth=0,
                                    command=self.start_button)
         self.button_start.grid(row=2, column=0, pady=10, padx=20)
 
-        self.button_stop = Button(master=self.frame_left,
+        self.button_stop = customtkinter.CTkButton(master=self.frame_left,
                                   text="Stop",
-                                  compound=tkinter.CENTER,
-                                  image = self.button_img,
-                                  borderwidth=0,
+                                  # compound=tkinter.CENTER,
+                                  # image = self.button_img,
+                                  # borderwidth=0,
                                   command=self.stop_button)
         self.button_stop.grid(row=3, column=0, pady=10, padx=20)
 
-        self.button_settings = Button(master=self.frame_left,
+        self.button_settings = customtkinter.CTkButton(master=self.frame_left,
                                       text="Settings",
-                                      compound=tkinter.CENTER,
-                                      image = self.button_img,
-                                      borderwidth=0,
+                                      # compound=tkinter.CENTER,
+                                      # image = self.button_img,
+                                      # borderwidth=0,
                                       command=self.settings_button)
         self.button_settings.grid(row=4, column=0, pady=10, padx=20)
 
-        self.button_help = Button(master=self.frame_left,
+        self.button_help = customtkinter.CTkButton(master=self.frame_left,
                                   text="Help",
-                                  compound=tkinter.CENTER,
-                                  image = self.button_img,
-                                  borderwidth=0,
+                                  # compound=tkinter.CENTER,
+                                  # image = self.button_img,
+                                  # borderwidth=0,
                                   command=self.help_button)
         self.button_help.grid(row=5, column=0, pady=10, padx=20)
 
-        self.button_about = Button(master=self.frame_left,
-                                   #self.button_about = Button(master=self.frame_left,
+        self.button_about = customtkinter.CTkButton(master=self.frame_left,
                                    text="About",
-                                   compound=tkinter.CENTER,
-                                   image = self.button_img,
-                                   borderwidth=0,
+                                   # compound=tkinter.CENTER,
+                                   # image = self.button_img,
+                                   # borderwidth=0,
                                    command=self.about_button)
         self.button_about.grid(row=6, column=0, pady=10, padx=20)
 
-        self.button_quit = Button(master=self.frame_left,
+        self.button_quit = customtkinter.CTkButton(master=self.frame_left,
                                   text="Quit",
-                                  compound=tkinter.CENTER,
-                                  image = self.button_img,
-                                  borderwidth=0,
+                                  # compound=tkinter.CENTER,
+                                  # image = self.button_img,
+                                  # borderwidth=0,
                                   command=self.on_closing)
         self.button_quit.grid(row=7, column=0, pady=10, padx=20)
 
@@ -232,7 +231,8 @@ class App(customtkinter.CTk):
             self.settings_window.grid_rowconfigure(len(self.config["actions"]) + 12, weight=1) # make the row stretchable
 
             # mode light/dark radio button
-            label_radio_group = Label(master=self.settings_window,text="Select display mode:", font=("Helvetica", 12))
+            label_radio_group = customtkinter.CTkLabel(master=self.settings_window,text="Select display mode:") # font=("Helvetica", 12))
+
             radio_button_0 = customtkinter.CTkRadioButton(master=self.settings_window,
                                                                variable=self.radio_var,
                                                                value=0,
@@ -247,35 +247,35 @@ class App(customtkinter.CTk):
             radio_button_1.grid(row=2, column=0, sticky=W, padx=10, pady=10)
 
             # add label and input field for setting the timer delay
-            label_timer_delay = Label(master=self.settings_window,text="Set main delay:", font=("Helvetica", 12), anchor=W)
+            label_timer_delay = customtkinter.CTkLabel(master=self.settings_window,text="Set main delay:") #, font=("Helvetica", 12), anchor=W)
             label_timer_delay.grid(row=3, column=0, sticky=W, padx=10, pady=10)
-            self.input_loop_delay = Entry(master=self.settings_window, width=30)
+            self.input_loop_delay = customtkinter.CTkEntry(master=self.settings_window, width=100)
             self.input_loop_delay.grid(row=3, column=1, sticky=W, padx=10, pady=10)
             self.input_loop_delay.insert(0, str(self.config['loop_delay']))
 
             # actions delay
-            label_actions_delay = Label(master=self.settings_window,text="Set actions delay:", font=("Helvetica", 12), anchor=W)
+            label_actions_delay = customtkinter.CTkLabel(master=self.settings_window,text="Set actions delay:") #, font=("Helvetica", 12), anchor=W)
             label_actions_delay.grid(row=4, column=0, sticky=W, padx=10, pady=10)
-            self.input_actions_delay = Entry(master=self.settings_window, width=30)
+            self.input_actions_delay = customtkinter.CTkEntry(master=self.settings_window, width=100)
             self.input_actions_delay.grid(row=4, column=1, sticky=W, padx=10, pady=10)
             self.input_actions_delay.insert(0, str(self.config['actions_delay']))
 
             # video delay
-            label_video_delay = Label(master=self.settings_window,text="Set video delay:", font=("Helvetica", 12), anchor=W)
+            label_video_delay = customtkinter.CTkLabel(master=self.settings_window,text="Set video delay:") #, font=("Helvetica", 12), anchor=W)
             label_video_delay.grid(row=5, column=0, sticky=W, padx=10, pady=10)
-            self.input_video_delay = Entry(master=self.settings_window, width=30)
+            self.input_video_delay = customtkinter.CTkEntry(master=self.settings_window, width=100)
             self.input_video_delay.grid(row=5, column=1, sticky=W, padx=10, pady=10)
             self.input_video_delay.insert(0, str(self.config['video_delay']))
 
             #gestures
             #label = customtkinter.CTkLabel(master=self.settings_window, text="Configure your gestures:") # this is old custom tkinter code.
-            label = Label(master=self.settings_window, text="Configure your gestures:", font=("Helvetica", 14))
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Configure your gestures:") #, font=("Helvetica", 14))
             label.grid(row=6, column=0, sticky=W, padx=0, pady=1)
-            label = Label(master=self.settings_window, text="Action:", anchor=W, font=("Helvetica", 12))
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Action:") #, anchor=W, font=("Helvetica", 12))
             label.grid(row=7, column=0, sticky=W, padx=0, pady=1)
-            label = Label(master=self.settings_window, text="Left hand:", anchor=W, font=("Helvetica", 12))
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Left hand:") #, anchor=W, font=("Helvetica", 12))
             label.grid(row=7, column=1, sticky=W, padx=0, pady=1)
-            label = Label(master=self.settings_window, text="Right hand:", anchor=W, font=("Helvetica", 12))
+            label = customtkinter.CTkLabel(master=self.settings_window, text="Right hand:") #, anchor=W, font=("Helvetica", 12))
             label.grid(row=7, column=2, sticky=W, padx=0, pady=1)
 
             # actions
@@ -311,22 +311,22 @@ class App(customtkinter.CTk):
             nextrow = 9 + len(self.config["actionsDefault"]) + 1 # hack to get the row number of the next row to be added
 
             # button to run the training
-            button = Button(master=self.settings_window, text="Train gestures", command=self.train_gestures)
+            button = customtkinter.CTkButton(master=self.settings_window, text="Train gestures", command=self.train_gestures)
             button.grid(row=nextrow, column=0, sticky=W, padx=10, pady=10)
 
             # save button
-            save_settings_button = Button(master=self.settings_window, text="Save",
-                                          compound=tkinter.CENTER,
-                                          image = self.button_img,
-                                          borderwidth=0,
+            save_settings_button = customtkinter.CTkButton(master=self.settings_window, text="Save",
+                                          # compound=tkinter.CENTER,
+                                          # image = self.button_img,
+                                          # borderwidth=0,
                                           command =lambda: self.save_settings(self.settings_window))
             save_settings_button.grid(row=nextrow+1, column=3, sticky=E, padx=30, pady=10)
 
             # cancel button
-            cancel_settings_button = Button(master=self.settings_window, text="Cancel",
-                                            compound=tkinter.CENTER,
-                                            image = self.button_img,
-                                            borderwidth=0,
+            cancel_settings_button = customtkinter.CTkButton(master=self.settings_window, text="Cancel",
+                                            # compound=tkinter.CENTER,
+                                            # image = self.button_img,
+                                            # borderwidth=0,
                                             command =self.cancel_settings_button)
             cancel_settings_button.grid(row=nextrow+1, column=2, sticky=E, padx=10, pady=10)
 
@@ -347,8 +347,8 @@ class App(customtkinter.CTk):
             gestures = str(key).replace(" ", "").replace("[", "").replace("]", "").replace("'","").split(",")
             cols = []
             for j in range(3):
-                e = Entry(self.settings_window, width=10)
-                e.grid(row=fromrow+i, column=j, sticky=NSEW, padx=5, pady=1)
+                e = customtkinter.CTkEntry(self.settings_window, width=10)
+                e.grid(row=fromrow+i, column=j, sticky=NSEW) #, padx=5, pady=1)
                 if j == 0:
                     e.insert(j, value)
                 elif j == 1:
@@ -389,11 +389,11 @@ class App(customtkinter.CTk):
         text_widget.config(yscrollcommand=scrollbar.set)
 
         # close button of help window
-        b = Button(master=self.help_window, text="Close",
-                   compound=tkinter.CENTER,
-                   image=self.button_img,
+        b = customtkinter.CTkButton(master=self.help_window, text="Close",
+                   # compound=tkinter.CENTER,
+                   # image=self.button_img,
                    command =lambda: self.exit_and_destroy_window(self.help_window))
-        b.pack(side="bottom", fill="both", expand=True)
+        b.pack(side="bottom")
 
 
     def about_button(self):
@@ -407,11 +407,11 @@ class App(customtkinter.CTk):
         label = Label(self.about_window, image=self.about_img, bg="black", bd=0)
 
         label.pack(expand=YES, fill=BOTH)
-        b = Button(master=self.about_window, text="Close",
-                   compound=tkinter.CENTER,
-                   image=self.button_img,
+        b = customtkinter.CTkButton(master=self.about_window, text="Close",
+                   # compound=tkinter.CENTER,
+                   # image=self.button_img,
                    command =lambda: self.exit_and_destroy_window(self.about_window))
-        b.pack(side="bottom", fill="both", expand=True)
+        b.pack(side="bottom")
 
 
     def exit_and_destroy_window(self, window):
