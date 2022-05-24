@@ -171,7 +171,7 @@ def run_video():
                 )
                 # print hand_sign_id, finger_gesture_id
                 print(hand_sign_id, ": ", keypoint_classifier_labels[hand_sign_id])
-            print ("-------------------------\n")
+            #print ("-------------------------\n")
         else:
             point_history.append([0, 0])
 

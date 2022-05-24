@@ -500,8 +500,8 @@ class App(customtkinter.CTk):
         #                            self.config["window_height"] ),
         #                    interpolation = cv2.INTER_AREA)
 
-        frame = cv2.resize(frame, (self.config["window_width"] - 180 -20 - 20 -20 -2 ,
-                                   self.config["window_height"] - 20 - 20 - 20 - 20),
+        frame = cv2.resize(frame, (self.config["window_width"] - 130 ,
+                                   self.config["window_height"] + 50 ),
                                    interpolation = cv2.INTER_AREA)
 
         #insert the logo
@@ -549,7 +549,7 @@ class App(customtkinter.CTk):
         :return:
         """
         num_gestures = self.mymain.number_of_gestures # number of gestures
-        if (self.mymain.is_teaching): # if we added data in keypoints.csv
+        if (self.mymain.is_teaching): # if we added data in keypoint.csv
             num_gestures = num_gestures+1 # add 1 to the number of gestures
 
         print("Training " + str(num_gestures) + " gestures.")

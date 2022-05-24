@@ -1,0 +1,40 @@
+{
+  "cap_device": 0,
+  "loop_delay": "30",
+  "video_delay": "10",
+  "actions_delay": "800",
+  "num_signs": 3,
+  "window_width": 1242,
+  "window_height": 680,
+  "logo_file": "resources/EasyTeachLogo.png",
+  "classifier": {
+    "width": 1242,
+    "height": 680,
+    "min_detection_confidence": 0.7,
+    "min_tracking_confidence": 0.5,
+    "use_static_image_mode": "True",
+    "num_threads": 1
+  },
+  "actions": {
+    "['Close','Close']": "closeAltTab",
+    "['PointRight','PointUp']": "nextTab",
+    "['PointUp','PointLeft']": "prevTab",
+    "['PointUp','PointDown']": "upTab",
+    "['PointDown','PointDown']": "downTab",
+    "['2-fingers-up','Close']": "upArrow",
+    "['Close','2-fingers-up']": "downArrow",
+    "['PointRight','PointLeft']": "space",
+    "['PointUp','PointUp']": "openAltTab"
+  },
+  "actionsDefault": {
+    "['PointUp','PointUp']": "openAltTab",
+    "['Close','Close']": "closeAltTab",
+    "['PointRight','PointUp']": "nextTab",
+    "['PointUp','PointLeft']": "prevTab",
+    "['PointUp','PointDown']": "upTab",
+    "['PointDown','PointDown']": "downTab",
+    "['2-fingers-up','Close']": "upArrow",
+    "['Close','2-fingers-up']": "downArrow",
+    "['PointRight','PointLeft']": "space"
+  }
+}
