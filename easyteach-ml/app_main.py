@@ -136,6 +136,7 @@ class AppMain:
         :param key:
         :return:
         """
+        #print("key event")
         self.new_gesture_index = -1
         if key == 'k':
             self.mode = 1
@@ -279,9 +280,11 @@ class AppMain:
                 print (self.tk.config['actions'][key])
                 # execute a timer to slow down actions
                 # set a timer to execute the action
-                if self.currentAction is not None:
-                    self.after_cancel(self.currentAction)
-                self.currentAction = self.tk.after(self.tk.config['actions_delay'], self.actionMapping.execute_action(self.tk.config['actions'][key]))
+                if self.currentAction is None:
+                    self.actionMapping.execute_action(self.tk.config['actions'][key])
+                    self.currentAction = self.tk.after(self.tk.config['actions_delay'], self.cancelCurrentAction)
+                    #self.after_cancel(self.currentAction)
+                #self.currentAction = self.tk.after(self.tk.config['actions_delay'], self.actionMapping.execute_action(self.tk.config['actions'][key]))
 
 
             else:
@@ -294,6 +297,9 @@ class AppMain:
 
         self.debug_image = draw_point_history(self.debug_image, self.point_history)
         self.debug_image = draw_info(self.debug_image, fps, self.mode, self.new_gesture_index)
+
+    def cancelCurrentAction(self):
+        self.currentAction = None
 
 
 if __name__ == "__AppMain__":
