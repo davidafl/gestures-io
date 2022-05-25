@@ -17,14 +17,14 @@
   },
   "actions": {
     "['Close','Close']": "closeAltTab",
-    "['PointRight','PointUp']": "nextTab",
-    "['PointUp','PointLeft']": "prevTab",
+    "['PointRight','PointUp-Right']": "nextTab",
+    "['PointUp-Left','PointLeft']": "prevTab",
     "['PointUp','PointDown']": "upTab",
     "['PointDown','PointDown']": "downTab",
-    "['2-fingers-left','Close']": "upArrow",
-    "['Close','2-fingers-right']": "downArrow",
+    "['2-Fingers-Left','Close']": "upArrow",
+    "['Close','2-Fingers-Right']": "downArrow",
     "['PointRight','PointLeft']": "space",
-    "['PointUp','PointUp']": "openAltTab"
+    "['PointUp-Left','PointUp-Right']": "openAltTab"
   },
   "actionsDefault": {
     "['Close','Close']": "closeAltTab",
@@ -32,9 +32,22 @@
     "['PointUp','PointLeft']": "prevTab",
     "['PointUp','PointDown']": "upTab",
     "['PointDown','PointDown']": "downTab",
-    "['2-fingers-left','Close']": "upArrow",
-    "['Close','2-fingers-right']": "downArrow",
+    "['Thumb-Up-left','Close']": "upArrow",
+    "['Close','Thumb-Up-right']": "downArrow",
     "['PointRight','PointLeft']": "space",
     "['PointUp','PointUp']": "openAltTab"
-  }
+  },
+    "actionsList": [
+    "openAltTab",
+    "closeAltTab",
+      "upTab",
+      "downTab",
+    "nextTab",
+    "prevTab",
+
+    "upArrow",
+    "downArrow",
+
+    "space"
+  ]
 }

@@ -146,8 +146,6 @@ Here are some application examples.
 * [MediaPipe](https://mediapipe.dev/)
 * [Kazuhito00/mediapipe-python-sample](https://github.com/Kazuhito00/mediapipe-python-sample)
 
-# Author
-Kazuhito Takahashi(https://twitter.com/KzhtTkhs)
- 
+
 # License 
 hand-gesture-recognition-using-mediapipe is under [Apache v2 license](LICENSE).

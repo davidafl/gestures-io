@@ -32,8 +32,18 @@
     "['PointRight','PointLeft']": "downArrow",
     "['Open','Open']": "space",
     "['PointUp','PointUp']": "openAltTab",
-
     "['PointRight','PointRight']": "upTab",
     "['PointLeft','PointLeft']": "downTab"
-  }
+  },
+  "actionsList": [
+    "openAltTab",
+    "closeAltTab",
+    "upTab",
+    "nextTab",
+    "prevTab",
+    "downTab",
+    "upArrow",
+    "downArrow",
+    "space"
+  ]
 }

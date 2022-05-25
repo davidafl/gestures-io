@@ -281,10 +281,12 @@ class App(customtkinter.CTk):
             # actions
             self.actionVar = tkinter.StringVar(app)
             # get the list of actions from the actionsDefault key (we assume all of them are there)
-            self.actionVar.set(list(self.config['actionsDefault'].values())[0])
+            #self.actionVar.set(list(self.config['actionsDefault'].values())[0])
+            self.actionVar.set(list(self.config['actionsList'])[0])
             # update other dropdowns upon change
             self.actionVar.trace("w", lambda name, index, mode, actionVar=self.actionVar: self.action_changed(self.actionVar))
-            optionlist = list(self.config['actionsDefault'].values()) # make a copy of the list of actions
+            #optionlist = list(self.config['actionsDefault'].values()) # make a copy of the list of actions
+            optionlist = list(self.config['actionsList'])  # make a copy of the list of actions
             dropdown = tkinter.OptionMenu(self.settings_window, self.actionVar, *optionlist)
             dropdown.grid(row=8, column=0, sticky=W, padx=5, pady=1)
 
@@ -308,7 +310,7 @@ class App(customtkinter.CTk):
             self.action_changed(self.actionVar) # trigger initial action update
             self.display_gestures_config_table(fromrow=9) # display a table of all gestures in config
 
-            nextrow = 9 + len(self.config["actionsDefault"]) + 1 # hack to get the row number of the next row to be added
+            nextrow = 9 + len(self.config["actionsList"]) + 1 # hack to get the row number of the next row to be added
 
             # button to run the training
             button = customtkinter.CTkButton(master=self.settings_window, text="Train gestures", command=self.train_gestures)
@@ -500,8 +502,8 @@ class App(customtkinter.CTk):
         #                            self.config["window_height"] ),
         #                    interpolation = cv2.INTER_AREA)
 
-        frame = cv2.resize(frame, (self.config["window_width"] - 130 ,
-                                   self.config["window_height"] + 50 ),
+        frame = cv2.resize(frame, (self.config["window_width"]  ,
+                                   self.config["window_height"] + 100 ),
                                    interpolation = cv2.INTER_AREA)
 
         #insert the logo

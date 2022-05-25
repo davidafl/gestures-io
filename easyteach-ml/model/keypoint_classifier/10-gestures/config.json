@@ -36,5 +36,16 @@
     "['Close','2-fingers-right']": "downArrow",
     "['PointRight','PointLeft']": "space",
     "['PointUp','PointUp']": "openAltTab"
-  }
+  },
+    "actionsList": [
+    "openAltTab",
+    "closeAltTab",
+    "upTab",
+    "nextTab",
+    "prevTab",
+    "downTab",
+    "upArrow",
+    "downArrow",
+    "space"
+  ]
 }
