@@ -1,6 +1,6 @@
 # useful information
 
-##installing
+## installing
 1. create a python virtual environment (venv)
 2. open terminal and execute: venv/Scripts/activate
 3. execute: pip install -r requirements.txt
